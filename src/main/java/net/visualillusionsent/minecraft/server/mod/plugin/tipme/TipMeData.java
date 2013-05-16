@@ -42,7 +42,7 @@ public final class TipMeData{
     private final long tipDelay;
     private final String colorPre;
     private final String prefix;
-    private final String tipspropsFile = "plugins/TipMe/TipMe.cfg";
+    private final String tipspropsFile = "config/TipMe/TipMe.cfg";
     private final String sqlDriveURL = "jdbc:mysql://";
     private Properties tipsprops;
     private TipMeDatasource tmds;
@@ -51,7 +51,7 @@ public final class TipMeData{
     private String sqlUsername, sqlPassword, sqlDatabase;
     private Timer tipTime;
 
-    final String tipsFile = "plugins/TipMe/Tips.txt";
+    final String tipsFile = "config/TipMe/Tips.txt";
 
     public TipMeData(ITipMe tipme){
         this.tipme = tipme;

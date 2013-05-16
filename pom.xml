@@ -49,7 +49,7 @@
   </issueManagement>
   <ciManagement>
     <system>Jenkins</system>
-    <url>http://ci.visualillusionsent.net</url>
+    <url>http://ci.visualillusionsent.net/job/TipMe</url>
   </ciManagement>
   <distributionManagement>
     <repository>
