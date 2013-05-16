@@ -40,7 +40,7 @@ public final class TipMeData{
     private final boolean useMySQL;
     private final boolean useScheduler;
     private final long tipDelay;
-    private final char colorPre;
+    private final String colorPre;
     private final String prefix;
     private final String tipspropsFile = "plugins/TipMe/TipMe.cfg";
     private final String sqlDriveURL = "jdbc:mysql://";
@@ -59,7 +59,7 @@ public final class TipMeData{
             throw new InternalError();
         }
 
-        colorPre = tipsprops.getProperty("color.prefix", "@").trim().charAt(0);
+        colorPre = tipsprops.getProperty("color.prefix", "@");
         prefix = parseTip(tipsprops.getProperty("tip.prefix", "@2Tip"));
         useScheduler = Boolean.parseBoolean(tipsprops.getProperty("use.internal.schedule", "true"));
         tipDelay = Long.parseLong(tipsprops.getProperty("internal.schedule.delay", "5")) * 60000;
@@ -221,7 +221,7 @@ public final class TipMeData{
                 BufferedWriter write = new BufferedWriter(new FileWriter(checkTipsProps));
                 write.write("color.prefix=@");
                 write.newLine();
-                write.write("tip.prefix=@2Tip");
+                write.write("tip.prefix=@2ProTip:");
                 write.newLine();
                 write.write("use.internal.schedule=true");
                 write.newLine();
