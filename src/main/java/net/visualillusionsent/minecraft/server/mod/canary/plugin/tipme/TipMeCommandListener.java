@@ -41,7 +41,7 @@ public final class TipMeCommandListener implements CommandListener{
             permissions = { "tipme.admin" },
             toolTip = "/tipme <add|remove|getall|reload|tipserver> [index|tipmessage]")
     public void main(MessageReceiver msgrec, String[] args){
-        msgrec.message("\u00A7CUsage: /tipme <add|remove|getall|reload|tipserver> [index|tipmessage] (index needed for removal, message need for adding)");
+        msgrec.notice("Usage: /tipme <add|remove|getall|reload|tipserver> [index|tipmessage] (index needed for removal, message need for adding)");
     }
 
     @Command(aliases = { "add" },
@@ -50,12 +50,16 @@ public final class TipMeCommandListener implements CommandListener{
             toolTip = "/tipme add <tipmessage>",
             parent = "tipme")
     public void add(MessageReceiver msgrec, String[] args){
-        String tip = StringUtils.joinString(args, " ", 1, args.length);
+        if (args.length < 1) {
+            msgrec.notice("/tipme add <tipmessage>");
+            return;
+        }
+        String tip = StringUtils.joinString(args, " ", 1);
         if (data.createTip(tip)) {
             msgrec.message("\u00A72Tip Added!");
         }
         else {
-            msgrec.message("\u00A7CFailed to add tip... Error has been logged.");
+            msgrec.notice("Failed to add tip... Error has been logged.");
         }
     }
 
@@ -65,14 +69,14 @@ public final class TipMeCommandListener implements CommandListener{
             toolTip = "/tipme remove <index>",
             parent = "tipme")
     public void remove(MessageReceiver msgrec, String[] args){
-        if (args.length > 2) {
+        if (args.length > 1) {
             try {
                 int index = Integer.parseInt(args[1]);
                 boolean removed = data.removeTip(index);
                 msgrec.message(removed ? "\u00A74Tip Removed!" : "\u00A7cFailed to remove tip... Error has been logged.");
             }
             catch (NumberFormatException nfe) {
-                msgrec.message("\u00A7CInvaild Tip #");
+                msgrec.notice("Invaild Tip #");
             }
         }
     }
@@ -98,7 +102,7 @@ public final class TipMeCommandListener implements CommandListener{
             parent = "tipme")
     public void reload(MessageReceiver msgrec, String[] args){
         if (!data.reload()) {
-            msgrec.message("\u00A7CFailed to reload tips... Error has been logged.");
+            msgrec.notice("Failed to reload tips... Error has been logged.");
         }
         else {
             msgrec.message("\u00A72Tips reloaded!");
