@@ -1,0 +1,42 @@
+﻿# TipMe - Bukkit Plugin configuration file
+# © Copyright 2013 Visual Illusions Entertainment
+name: TipMe
+main: net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme.TipMe
+version: 2.0
+author: Jason (darkdiplomat)
+website: http://wiki.visualillusionsent.net/TipMe
+
+commands:
+  tipme:
+    description: Main Tips Command
+    usage: /tipme <add|remove|getall|reload|tipserver> [index|tipmessage] - Tips commands
+    permission: tipme.admin
+  tipme add:
+    description: Adds a tip to the list
+    usage: /tipme add <tip>
+    permission: tipme.admin
+  tipme remove:
+    description: Removes a tip from the list
+    usage: /tipme remove <index>
+    permission: tipme.admin
+  tipme getall:
+    description: Displays all Tips by index
+    usage: /tipme getall
+    permission: tipme.admin
+  tipme reload:
+    description: Reloads tips from the datasource
+    usage: /tipme reload
+    permission: tipme.admin
+  tipme tipserver:
+    description: Sends a tip to all players online
+    usage: /tipme tipserver
+    permission: tipme.admin
+  tipserver:
+    description: Console Command to tip all players online
+    usage: tipserver
+    permission: tipme.admin
+    
+permissions:
+  tipme.admin:
+    description: Gives access to all TipMe commands
+    default: op
