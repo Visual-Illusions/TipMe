@@ -112,7 +112,7 @@ public final class TipMeData{
 
     public final boolean createTip(String tip){
         if (tmds.saveTip(tip)) {
-            tips.add(tip);
+            tips.add(parseTip(tip));
             return true;
         }
         return false;
@@ -133,7 +133,7 @@ public final class TipMeData{
             synchronized (tips) {
                 int index = 0;
                 for (String tip : tips) {
-                    String[] parse = parseTip(tip).split(colorPre + "[Zz]");
+                    String[] parse = tip.split(colorPre + "[Zz]");
                     tipme.sendPlayerMessage(player, "\u00A76#" + index + ":\u00A7r " + parse[0]);
                     for (int lnindex = 1; lnindex < parse.length; lnindex++) {
                         tipme.sendPlayerMessage(player, "  ".concat(parse[lnindex]));
@@ -152,7 +152,7 @@ public final class TipMeData{
             synchronized (tips) {
                 int index = 0;
                 for (String tip : tips) {
-                    String[] parse = parseTip(tip).split(colorPre + "[Zz]");
+                    String[] parse = tip.split(colorPre + "[Zz]");
                     tipme.getLog().info("\u00A76#" + index + ":\u00A7r " + parse[0]);
                     for (int lnindex = 1; lnindex < parse.length; lnindex++) {
                         tipme.getLog().info("\t".concat(parse[lnindex]));
@@ -178,7 +178,7 @@ public final class TipMeData{
             tippy = tips.get(currenttip);
             currenttip++;
             if (tippy != null) {
-                String[] parse = parseTip(tippy).split(colorPre + "[Zz]");
+                String[] parse = tippy.split(colorPre + "[Zz]");
                 tipme.broadcastTip(prefix + "\u00A7r " + parse[0]);
                 for (int index = 1; index < parse.length; index++) {
                     tipme.broadcastTip("  ".concat(parse[index]));
@@ -194,7 +194,7 @@ public final class TipMeData{
     }
 
     final void addFromSource(String tip){
-        tips.add(tip);
+        tips.add(parseTip(tip));
     }
 
     private final boolean makeFiles(){
