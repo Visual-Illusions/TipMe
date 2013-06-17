@@ -1,3 +1,20 @@
+/*
+ * This file is part of TipMe.
+ *
+ * Copyright © 2012-2013 Visual Illusions Entertainment
+ *
+ * TipMe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * TipMe is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with TipMe.
+ * If not, see http://www.gnu.org/licenses/gpl.html.
+ */
 package net.visualillusionsent.minecraft.server.mod.plugin.tipme;
 
 import java.io.BufferedWriter;
@@ -15,27 +32,13 @@ import java.util.Properties;
 import java.util.Timer;
 
 /**
- * TipMe
- * <p>
- * Copyright (C) 2013 Visual Illusions Entertainment.
- * <p>
- * This program is free software: you can redistribute it and/or modify it<br/>
- * under the terms of the GNU General Public License as published by the Free Software Foundation,<br/>
- * either version 3 of the License, or (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br/>
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br/>
- * See the GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License along with this program.<br/>
- * If not, see http://www.gnu.org/licenses/gpl.html
+ * TipMe data handler
  * 
- * @version 2.0.0
  * @author Jason (darkdiplomat)
  */
 public final class TipMeData{
 
-    private final ITipMe tipme;
+    private final TipMe tipme;
     private final boolean randomize;
     private final boolean useMySQL;
     private final boolean useScheduler;
@@ -53,14 +56,14 @@ public final class TipMeData{
 
     final String tipsFile = "config/TipMe/Tips.txt";
 
-    public TipMeData(ITipMe tipme){
+    public TipMeData(TipMe tipme){
         this.tipme = tipme;
         if (!makeFiles()) {
             throw new InternalError();
         }
 
         colorPre = tipsprops.getProperty("color.prefix", "@");
-        prefix = parseTip(tipsprops.getProperty("tip.prefix", "@2Tip"));
+        prefix = parseTip(tipsprops.getProperty("tip.prefix", "@2ProTip:"));
         useScheduler = Boolean.parseBoolean(tipsprops.getProperty("use.internal.schedule", "true"));
         tipDelay = Long.parseLong(tipsprops.getProperty("internal.schedule.delay", "5")) * 60000;
         randomize = Boolean.parseBoolean(tipsprops.getProperty("randomize", "false"));
@@ -107,7 +110,7 @@ public final class TipMeData{
     }
 
     public final Connection getConnection() throws SQLException{
-        return DriverManager.getConnection(sqlDriveURL + sqlDatabase, sqlUsername, sqlPassword);
+        return DriverManager.getConnection(sqlDriveURL.concat(sqlDatabase), sqlUsername, sqlPassword);
     }
 
     public final boolean createTip(String tip){
@@ -152,7 +155,7 @@ public final class TipMeData{
             synchronized (tips) {
                 int index = 0;
                 for (String tip : tips) {
-                    String[] parse = tip.split(colorPre + "[Zz]");
+                    String[] parse = tip.split(colorPre.concat("[Zz]"));
                     tipme.getLog().info("\u00A76#" + index + ":\u00A7r " + parse[0]);
                     for (int lnindex = 1; lnindex < parse.length; lnindex++) {
                         tipme.getLog().info("\t".concat(parse[lnindex]));
@@ -178,8 +181,8 @@ public final class TipMeData{
             tippy = tips.get(currenttip);
             currenttip++;
             if (tippy != null) {
-                String[] parse = tippy.split(colorPre + "[Zz]");
-                tipme.broadcastTip(prefix + "\u00A7r " + parse[0]);
+                String[] parse = tippy.split(colorPre.concat("[Zz]"));
+                tipme.broadcastTip(new StringBuilder().append(prefix).append("\u00A7r ").append(parse[0]).toString());
                 for (int index = 1; index < parse.length; index++) {
                     tipme.broadcastTip("  ".concat(parse[index]));
                 }
@@ -203,7 +206,7 @@ public final class TipMeData{
         File checkTipsProps = new File(tipspropsFile);
         if (!checkDir.exists()) {
             if (!checkDir.mkdirs()) {
-                tipme.getLog().severe("[TipMe] Unable to create TipMe configuration directory...");
+                tipme.getLog().severe("Unable to create TipMe configuration directory...");
                 return false;
             }
         }
@@ -212,14 +215,14 @@ public final class TipMeData{
                 checkTipsFile.createNewFile();
             }
             catch (IOException e) {
-                tipme.getLog().severe("[TipMe] Failed to make Tips.txt");
+                tipme.getLog().severe("Failed to make Tips.txt");
                 return false;
             }
         }
         if (!checkTipsProps.exists()) {
             try {
                 BufferedWriter write = new BufferedWriter(new FileWriter(checkTipsProps));
-                write.write("#Sets the String to convert into § (Default: @)");
+                write.write("#Sets the String to convert into \u00A7 (Default: @)");
                 write.newLine();
                 write.write("color.prefix=@");
                 write.newLine();
@@ -273,28 +276,6 @@ public final class TipMeData{
     }
 
     private final String parseTip(String tip){
-        tip = tip.replace(colorPre + "0", "\u00A70");
-        tip = tip.replace(colorPre + "1", "\u00A71");
-        tip = tip.replace(colorPre + "2", "\u00A72");
-        tip = tip.replace(colorPre + "3", "\u00A73");
-        tip = tip.replace(colorPre + "4", "\u00A74");
-        tip = tip.replace(colorPre + "5", "\u00A75");
-        tip = tip.replace(colorPre + "6", "\u00A76");
-        tip = tip.replace(colorPre + "7", "\u00A77");
-        tip = tip.replace(colorPre + "8", "\u00A78");
-        tip = tip.replace(colorPre + "9", "\u00A79");
-        tip = tip.replaceAll(colorPre + "[Aa]", "\u00A7A");
-        tip = tip.replaceAll(colorPre + "[Bb]", "\u00A7B");
-        tip = tip.replaceAll(colorPre + "[Cc]", "\u00A7C");
-        tip = tip.replaceAll(colorPre + "[Dd]", "\u00A7D");
-        tip = tip.replaceAll(colorPre + "[Ee]", "\u00A7E");
-        tip = tip.replaceAll(colorPre + "[Ff]", "\u00A7F");
-        tip = tip.replaceAll(colorPre + "[Kk]", "\u00A7K");
-        tip = tip.replaceAll(colorPre + "[Ll]", "\u00A7L");
-        tip = tip.replaceAll(colorPre + "[Mm]", "\u00A7M");
-        tip = tip.replaceAll(colorPre + "[Nn]", "\u00A7N");
-        tip = tip.replaceAll(colorPre + "[Oo]", "\u00A7O");
-        tip = tip.replaceAll(colorPre + "[Rr]", "\u00A7R");
-        return tip;
+        return tip.replaceAll(colorPre + "([0-9A-FK-ORa-fk-or])", "\u00A7$1");
     }
 }

@@ -1,3 +1,20 @@
+/*
+ * This file is part of TipMe.
+ *
+ * Copyright © 2012-2013 Visual Illusions Entertainment
+ *
+ * TipMe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * TipMe is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with TipMe.
+ * If not, see http://www.gnu.org/licenses/gpl.html.
+ */
 package net.visualillusionsent.minecraft.server.mod.canary.plugin.tipme;
 
 import net.canarymod.Canary;
@@ -10,28 +27,14 @@ import net.visualillusionsent.minecraft.server.mod.plugin.tipme.TipMeData;
 import net.visualillusionsent.utils.StringUtils;
 
 /**
- * TipMe
- * <p>
- * Copyright (C) 2013 Visual Illusions Entertainment.
- * <p>
- * This program is free software: you can redistribute it and/or modify it<br/>
- * under the terms of the GNU General Public License as published by the Free Software Foundation,<br/>
- * either version 3 of the License, or (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br/>
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br/>
- * See the GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License along with this program.<br/>
- * If not, see http://www.gnu.org/licenses/gpl.html
+ * TipMe Command Listener for CanaryMod
  * 
- * @version 2.0.0
  * @author Jason (darkdiplomat)
  */
 public final class TipMeCommandListener implements CommandListener{
-    private TipMeData data;
+    private final TipMeData data;
 
-    TipMeCommandListener(TipMe tipme) throws CommandDependencyException{
+    TipMeCommandListener(TipMe_Canary tipme) throws CommandDependencyException{
         this.data = tipme.tmd;
         Canary.commands().registerCommands(this, tipme, false);
     }
@@ -40,7 +43,7 @@ public final class TipMeCommandListener implements CommandListener{
             description = "TipMe command",
             permissions = { "tipme.admin" },
             toolTip = "/tipme <add|remove|getall|reload|tipserver> [index|tipmessage]")
-    public void main(MessageReceiver msgrec, String[] args){
+    public final void main(MessageReceiver msgrec, String[] args){
         msgrec.notice("Usage: /tipme <add|remove|getall|reload|tipserver> [index|tipmessage] (index needed for removal, message need for adding)");
     }
 
@@ -49,7 +52,7 @@ public final class TipMeCommandListener implements CommandListener{
             permissions = { "tipme.admin" },
             toolTip = "/tipme add <tipmessage>",
             parent = "tipme")
-    public void add(MessageReceiver msgrec, String[] args){
+    public final void add(MessageReceiver msgrec, String[] args){
         if (args.length < 1) {
             msgrec.notice("/tipme add <tipmessage>");
             return;
@@ -68,7 +71,7 @@ public final class TipMeCommandListener implements CommandListener{
             permissions = { "tipme.admin" },
             toolTip = "/tipme remove <index>",
             parent = "tipme")
-    public void remove(MessageReceiver msgrec, String[] args){
+    public final void remove(MessageReceiver msgrec, String[] args){
         if (args.length > 1) {
             try {
                 int index = Integer.parseInt(args[1]);
@@ -86,7 +89,7 @@ public final class TipMeCommandListener implements CommandListener{
             permissions = { "tipme.admin" },
             toolTip = "/tipme getall",
             parent = "tipme")
-    public void getall(MessageReceiver msgrec, String[] args){
+    public final void getall(MessageReceiver msgrec, String[] args){
         if (msgrec instanceof Player) {
             data.sendAll((Player) msgrec);
         }
@@ -100,7 +103,7 @@ public final class TipMeCommandListener implements CommandListener{
             permissions = { "tipme.admin" },
             toolTip = "/tipme reload",
             parent = "tipme")
-    public void reload(MessageReceiver msgrec, String[] args){
+    public final void reload(MessageReceiver msgrec, String[] args){
         if (!data.reload()) {
             msgrec.notice("Failed to reload tips... Error has been logged.");
         }
@@ -114,7 +117,7 @@ public final class TipMeCommandListener implements CommandListener{
             permissions = { "tipme.admin" },
             toolTip = "/tipme tipserver",
             parent = "tipme")
-    public void tipserver(MessageReceiver msgrec, String[] args){
+    public final void tipserver(MessageReceiver msgrec, String[] args){
         data.sendTip();
     }
 }

@@ -17,21 +17,19 @@
  */
 package net.visualillusionsent.minecraft.server.mod.plugin.tipme;
 
-import java.util.TimerTask;
+import java.util.logging.Logger;
 
 /**
- * TipMe Send tip task
+ * TipMe plugin interface
  * 
  * @author Jason (darkdiplomat)
  */
-final class SendTipTask extends TimerTask{
-    private final TipMeData tmd;
+public interface TipMe{
 
-    SendTipTask(TipMeData tmd){
-        this.tmd = tmd;
-    }
+    Logger getLog();
 
-    public final void run(){
-        tmd.sendTip();
-    }
+    void broadcastTip(String tip);
+
+    void sendPlayerMessage(Object player, String tip);
+
 }

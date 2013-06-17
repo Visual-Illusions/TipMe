@@ -1,53 +1,30 @@
 package net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.visualillusionsent.minecraft.server.mod.plugin.tipme.ITipMe;
 import net.visualillusionsent.minecraft.server.mod.plugin.tipme.TipMeData;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * TipMe
- * <p>
- * Copyright (C) 2013 Visual Illusions Entertainment.
- * <p>
- * This program is free software: you can redistribute it and/or modify it<br/>
- * under the terms of the GNU General Public License as published by the Free Software Foundation,<br/>
- * either version 3 of the License, or (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br/>
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br/>
- * See the GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License along with this program.<br/>
- * If not, see http://www.gnu.org/licenses/gpl.html
+ * TipMe Command Executor for Bukkit
  * 
- * @version 2.0.0
  * @author Jason (darkdiplomat)
  */
-public final class TipMe extends JavaPlugin implements ITipMe{
-    private TipMeData tmd;
+public class TipMeCommandExecutor implements CommandExecutor{
+    private final TipMeData tmd;
+    private final TipMe_Bukkit tipme;
 
-    @Override
-    public final void onEnable(){
-        if (tmd == null) {
-            tmd = new TipMeData(this);
-        }
+    TipMeCommandExecutor(TipMe_Bukkit tipme){
+        this.tmd = tipme.tmd;
+        this.tipme = tipme;
     }
 
     @Override
-    public final void onDisable(){
-        tmd.killTimer();
-    }
-
-    @Override
-    public final boolean onCommand(CommandSender sender, Command cmd, String mainCmd, String[] args){
-        if (mainCmd.equals("tipme")) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
+        if (label.equals("tipme")) {
             try {
                 if (args.length > 0) {
                     if (args.length > 1) {
@@ -102,27 +79,11 @@ public final class TipMe extends JavaPlugin implements ITipMe{
             }
             catch (Exception ex) {
                 sender.sendMessage("\u00A7CAn unhandled exception has occurred in TipMe! Error has been logged!");
-                this.getLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
+                tipme.getLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
             }
             return true;
         }
         return false;
     }
 
-    @Override
-    public Logger getLog(){
-        return this.getLogger();
-    }
-
-    @Override
-    public void broadcastTip(String tip){
-        Bukkit.getServer().broadcastMessage(tip);
-    }
-
-    @Override
-    public void sendPlayerMessage(Object player, String tip){
-        if (player instanceof Player) {
-            ((Player) player).sendMessage(tip);
-        }
-    }
 }

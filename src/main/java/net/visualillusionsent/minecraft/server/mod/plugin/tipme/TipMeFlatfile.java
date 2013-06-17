@@ -1,3 +1,20 @@
+/*
+ * This file is part of TipMe.
+ *
+ * Copyright © 2012-2013 Visual Illusions Entertainment
+ *
+ * TipMe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * TipMe is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with TipMe.
+ * If not, see http://www.gnu.org/licenses/gpl.html.
+ */
 package net.visualillusionsent.minecraft.server.mod.plugin.tipme;
 
 import java.io.BufferedReader;
@@ -10,30 +27,16 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 
 /**
- * TipMe
- * <p>
- * Copyright (C) 2013 Visual Illusions Entertainment.
- * <p>
- * This program is free software: you can redistribute it and/or modify it<br/>
- * under the terms of the GNU General Public License as published by the Free Software Foundation,<br/>
- * either version 3 of the License, or (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br/>
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br/>
- * See the GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License along with this program.<br/>
- * If not, see http://www.gnu.org/licenses/gpl.html
+ * TipMe Flatfile data source
  * 
- * @version 2.0.0
  * @author Jason (darkdiplomat)
  */
 public class TipMeFlatfile implements TipMeDatasource{
 
-    private final ITipMe tipme;
+    private final TipMe tipme;
     private final TipMeData data;
 
-    TipMeFlatfile(ITipMe tipme, TipMeData data){
+    TipMeFlatfile(TipMe tipme, TipMeData data){
         this.tipme = tipme;
         this.data = data;
     }
