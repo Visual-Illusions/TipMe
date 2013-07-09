@@ -1,7 +1,24 @@
+/*
+ * This file is part of TipMe.
+ *
+ * Copyright © 2012-2013 Visual Illusions Entertainment
+ *
+ * TipMe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * TipMe is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with TipMe.
+ * If not, see http://www.gnu.org/licenses/gpl.html.
+ */
 package net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme;
 
 import java.util.logging.Level;
-import net.visualillusionsent.minecraft.server.mod.plugin.tipme.TipMeData;
+import net.visualillusionsent.tipme.TipMeData;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,9 +32,9 @@ import org.bukkit.entity.Player;
  */
 public class TipMeCommandExecutor implements CommandExecutor{
     private final TipMeData tmd;
-    private final TipMe_Bukkit tipme;
+    private final BukkitTipMe tipme;
 
-    TipMeCommandExecutor(TipMe_Bukkit tipme){
+    TipMeCommandExecutor(BukkitTipMe tipme){
         this.tmd = tipme.tmd;
         this.tipme = tipme;
     }

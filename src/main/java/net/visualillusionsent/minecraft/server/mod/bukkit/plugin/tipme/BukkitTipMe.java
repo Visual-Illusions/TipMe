@@ -15,57 +15,57 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.minecraft.server.mod.canary.plugin.tipme;
+package net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme;
 
 import java.util.logging.Logger;
-import net.canarymod.Canary;
-import net.canarymod.api.entity.living.humanoid.Player;
-import net.canarymod.plugin.Plugin;
-import net.visualillusionsent.minecraft.server.mod.plugin.tipme.TipMe;
-import net.visualillusionsent.minecraft.server.mod.plugin.tipme.TipMeData;
+import net.visualillusionsent.tipme.TipMe;
+import net.visualillusionsent.tipme.TipMeData;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * TipMe main plugin class for CanaryMod
+ * TipMe main plugin class for Bukkit
  * 
  * @author Jason (darkdiplomat)
  */
-public class TipMe_Canary extends Plugin implements TipMe{
+public final class BukkitTipMe extends JavaPlugin implements TipMe{
     TipMeData tmd;
 
     @Override
-    public boolean enable(){
+    public final void onEnable(){
         try {
             if (tmd == null) {
                 tmd = new TipMeData(this);
-                new TipMeCommandListener(this);
+                getCommand("tipme").setExecutor(new TipMeCommandExecutor(this));
             }
         }
         catch (Throwable thrown) {
-            getLogman().severe("TipMe failed to start...");
-            return false;
+            getLogger().severe("TipMe failed to start...");
         }
-        return true;
     }
 
     @Override
-    public void disable(){
-        tmd.killTimer();
+    public final void onDisable(){
+        if (tmd != null) {
+            tmd.killTimer();
+        }
     }
 
     @Override
     public Logger getLog(){
-        return getLogman();
+        return this.getLogger();
     }
 
     @Override
     public void broadcastTip(String tip){
-        Canary.getServer().broadcastMessage(tip);
+        Bukkit.getServer().broadcastMessage(tip);
     }
 
     @Override
     public void sendPlayerMessage(Object player, String tip){
         if (player instanceof Player) {
-            ((Player) player).message(tip);
+            ((Player) player).sendMessage(tip);
         }
     }
 }

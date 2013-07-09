@@ -1,9 +1,9 @@
 ﻿# TipMe - Bukkit Plugin configuration file
 # Copyright © 2012-2013 Visual Illusions Entertainment
 name: TipMe
-main: net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme.TipMe_Bukkit
+main: net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme.BukkitTipMe
 version: 2.1
-author: Jason (darkdiplomat)
+author: Visual Illusions Entertainment
 website: http://wiki.visualillusionsent.net/TipMe
 
 commands:

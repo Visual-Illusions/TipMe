@@ -57,6 +57,11 @@
       <url>http://repo.bukkit.org/content/groups/public</url>
     </repository>
     <repository>
+      <id>spout-repo</id>
+      <name>Spout Public Repository</name>
+      <url>http://nexus.spout.org/content/groups/public/</url>
+    </repository>
+    <repository>
       <id>vi-repo</id>
       <name>Visual Illusions Repository</name>
       <url>http://repo.visualillusionsent.net/</url>
@@ -79,6 +84,11 @@
     <groupId>org.bukkit</groupId>
     <artifactId>bukkit</artifactId>
     <version>1.5.1-R0.2</version>
+   </dependency>
+   <dependency>
+     <groupId>org.spout</groupId>
+     <artifactId>spoutapi</artifactId>
+     <version>dev-SNAPSHOT</version>
    </dependency>
    <!-- Mods End -->
   </dependencies>

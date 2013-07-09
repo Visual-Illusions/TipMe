@@ -23,7 +23,7 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandDependencyException;
 import net.canarymod.commandsys.CommandListener;
-import net.visualillusionsent.minecraft.server.mod.plugin.tipme.TipMeData;
+import net.visualillusionsent.tipme.TipMeData;
 import net.visualillusionsent.utils.StringUtils;
 
 /**
@@ -34,7 +34,7 @@ import net.visualillusionsent.utils.StringUtils;
 public final class TipMeCommandListener implements CommandListener{
     private final TipMeData data;
 
-    TipMeCommandListener(TipMe_Canary tipme) throws CommandDependencyException{
+    TipMeCommandListener(CanaryTipMe tipme) throws CommandDependencyException{
         this.data = tipme.tmd;
         Canary.commands().registerCommands(this, tipme, false);
     }

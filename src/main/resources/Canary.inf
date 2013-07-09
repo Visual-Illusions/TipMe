@@ -1,6 +1,6 @@
 ;# TipMe - CanaryMod Plugin Configuration File
 ;# Copyright © 2012-2013 Visual Illusions Entertainment
-main-class=net.visualillusionsent.minecraft.server.mod.canary.plugin.tipme.TipMe_Canary
+main-class=net.visualillusionsent.minecraft.server.mod.canary.plugin.tipme.CanaryTipMe
 name=TipMe
-author=Jason (darkdiplomat)
+author=Visual Illusions Entertainment
 version=2.1

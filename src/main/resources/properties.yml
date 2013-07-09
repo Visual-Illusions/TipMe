@@ -1,0 +1,11 @@
+# TipMe - Spout Plugin configuration file
+# Copyright © 2012-2013 Visual Illusions Entertainment
+name: TipMe
+main: net.visualillusionsent.spout.server.plugin.tipme
+version: 2.1
+
+description: Tip sending plugin
+author: Visual Illusions Entertainment
+website: https://wiki.visualillusionsent.net/TipMe
+
+platform: SERVER

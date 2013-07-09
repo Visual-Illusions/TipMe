@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.minecraft.server.mod.plugin.tipme;
+package net.visualillusionsent.tipme;
 
 import java.io.BufferedReader;
 import java.io.File;
