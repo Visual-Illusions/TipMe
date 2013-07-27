@@ -78,7 +78,7 @@
    <dependency>
     <groupId>net.canarymod</groupId>
     <artifactId>CanaryLib</artifactId>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.9</version>
    </dependency>
    <dependency>
     <groupId>org.bukkit</groupId>
