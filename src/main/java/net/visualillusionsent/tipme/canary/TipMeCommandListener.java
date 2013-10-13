@@ -19,21 +19,25 @@ package net.visualillusionsent.tipme.canary;
 
 import net.canarymod.Canary;
 import net.canarymod.chat.MessageReceiver;
+import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandDependencyException;
 import net.canarymod.commandsys.CommandListener;
+import net.visualillusionsent.minecraft.plugin.canary.VisualIllusionsCanaryPluginInformationCommand;
 import net.visualillusionsent.tipme.TipMeData;
 import net.visualillusionsent.utils.StringUtils;
+import net.visualillusionsent.utils.VersionChecker;
 
 /**
  * TipMe Command Listener for CanaryMod
  *
  * @author Jason (darkdiplomat)
  */
-public final class TipMeCommandListener implements CommandListener {
+public final class TipMeCommandListener extends VisualIllusionsCanaryPluginInformationCommand implements CommandListener {
     private final TipMeData data;
 
     TipMeCommandListener(CanaryTipMe tipme) throws CommandDependencyException {
+        super(tipme);
         this.data = tipme.tmd;
         Canary.commands().registerCommands(this, tipme, false);
     }
@@ -110,5 +114,27 @@ public final class TipMeCommandListener implements CommandListener {
             parent = "tip")
     public final void tipserver(MessageReceiver msgrec, String[] args) {
         data.sendTip();
+    }
+
+    @Command(aliases = {"tipme"},
+            description = "TipMe information command",
+            permissions = {""},
+            toolTip = "/tipme")
+    public void infomationCommand(MessageReceiver msgrec, String[] cmd) {
+        for (String msg : about) {
+            if (msg.equals("$VERSION_CHECK$")) {
+                VersionChecker vc = plugin.getVersionChecker();
+                Boolean isLatest = vc.isLatest();
+                if (isLatest == null) {
+                    msgrec.message(center(TextFormat.GRAY.concat("VersionCheckerError: ").concat(vc.getErrorMessage())));
+                } else if (!isLatest) {
+                    msgrec.message(center(TextFormat.GRAY.concat(vc.getUpdateAvailibleMessage())));
+                } else {
+                    msgrec.message(center(TextFormat.LIGHT_GREEN.concat("Latest Version Installed")));
+                }
+            } else {
+                msgrec.message(msg);
+            }
+        }
     }
 }
