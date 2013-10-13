@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.visualillusionsent</groupId>
     <artifactId>tipme</artifactId>
-    <version>2.1</version>
+    <version>2.2</version>
     <name>TipMe</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <program.status>STABLE</program.status>
+        <program.status>ALPHA</program.status>
         <canary.main.class>${project.groupId}.${project.artifactId}.canary.CanaryTipMe</canary.main.class>
         <bukkit.main.class>${project.groupId}.${project.artifactId}.bukkit.BukkitTipMe</bukkit.main.class>
         <spout.main.class>${project.groupId}.${project.artifactId}.spout.SpoutTipMe</spout.main.class>
@@ -17,7 +17,7 @@
         <version.check.url>http://visualillusionsent.net/minecraft/plugins/</version.check.url>
         <devs>darkdiplomat</devs>
     </properties>
-    <description>Tip sending plugin for CanaryMod and Bukkit</description>
+    <description>Tip sending plugin for Bukkit, CanaryMod, and Spout servers</description>
     <licenses>
         <license>
             <name>GNU General Public License v3</name>
