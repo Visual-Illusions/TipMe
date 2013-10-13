@@ -7,7 +7,7 @@
     <name>TipMe</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <program.status>BETA</program.status>
+        <program.status>STABLE</program.status>
         <canary.main.class>${project.groupId}.${project.artifactId}.canary.CanaryTipMe</canary.main.class>
         <bukkit.main.class>${project.groupId}.${project.artifactId}.bukkit.BukkitTipMe</bukkit.main.class>
         <spout.main.class>${project.groupId}.${project.artifactId}.spout.SpoutTipMe</spout.main.class>
