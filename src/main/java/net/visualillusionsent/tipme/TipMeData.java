@@ -145,15 +145,13 @@ public final class TipMeData {
 
     public final void sendTip() {
         if (tips.size() > 0) {
-            String tippy = null;
             if (currenttip >= tips.size()) {
                 if (randomize) {
                     Collections.shuffle(tips);
                 }
                 currenttip = 0;
             }
-            tippy = tips.get(currenttip);
-            currenttip++;
+            String tippy = tips.get(currenttip++);
             if (tippy != null) {
                 String[] parse = tippy.split(colorPre.concat("[Zz]"));
                 tipme.broadcastTip(new StringBuilder().append(prefix).append("\u00A7r ").append(parse[0]).toString());
@@ -194,45 +192,27 @@ public final class TipMeData {
         }
         if (!checkTipsProps.exists()) {
             try {
-                BufferedWriter write = new BufferedWriter(new FileWriter(checkTipsProps));
-                write.write("#Sets the String to convert into \u00A7 (Default: @)");
-                write.newLine();
-                write.write("color.prefix=@");
-                write.newLine();
-                write.write("#The String to use to prefix Tips (Default: @2ProTip:)");
-                write.newLine();
-                write.write("tip.prefix=@2ProTip:");
-                write.newLine();
-                write.write("#Specifies if the Tips should be displayed using the internal scheduler");
-                write.newLine();
-                write.write("use.internal.schedule=true");
-                write.newLine();
-                write.write("#The time in minutes between displaying tips (Default: 5)");
-                write.newLine();
-                write.write("internal.schedule.delay=5");
-                write.newLine();
-                write.write("#Specifies whether to randomize the tips or not (Default: true)");
-                write.newLine();
-                write.write("randomize=false");
-                write.newLine();
-                write.write("#Specifies whether to store Tips in a MySQL Table (Default: false)");
-                write.newLine();
-                write.write("use.mysql=false");
-                write.newLine();
-                write.write("#Specifies the user name to connect to the MySQL Database (Default: root)");
-                write.newLine();
-                write.write("mysql.username=root");
-                write.newLine();
-                write.write("#Specifies the password to use to connect to the MySQL Database (Default: password)");
-                write.newLine();
-                write.write("mysql.password=password");
-                write.newLine();
-                write.write("#Specifies the URL of the MySQL Database in \"url:port/database\" format");
-                write.newLine();
-                write.write("mysql.db.url=url:port/database");
-                write.newLine();
-                write.flush();
-                write.close();
+                PrintWriter printer = new PrintWriter(new FileWriter(checkTipsProps));
+                printer.println("#Sets the String to convert into \u00A7 (Default: @)");
+                printer.println("color.prefix=@");
+                printer.println("#The String to use to prefix Tips (Default: @2ProTip:)");
+                printer.println("tip.prefix=@2ProTip:");
+                printer.println("#Specifies if the Tips should be displayed using the internal scheduler");
+                printer.println("use.internal.schedule=true");
+                printer.println("#The time in minutes between displaying tips (Default: 5)");
+                printer.println("internal.schedule.delay=5");
+                printer.println("#Specifies whether to randomize the tips or not (Default: true)");
+                printer.println("randomize=false");
+                printer.println("#Specifies whether to store Tips in a MySQL Table (Default: false)");
+                printer.println("use.mysql=false");
+                printer.println("#Specifies the user name to connect to the MySQL Database (Default: root)");
+                printer.println("mysql.username=root");
+                printer.println("#Specifies the password to use to connect to the MySQL Database (Default: password)");
+                printer.println("mysql.password=password");
+                printer.println("#Specifies the URL of the MySQL Database in \"url:port/database\" format");
+                printer.println("mysql.db.url=url:port/database");
+                printer.flush();
+                printer.close();
             } catch (IOException e) {
                 return false;
             }
