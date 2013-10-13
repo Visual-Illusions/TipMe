@@ -1,40 +1,49 @@
-﻿# TipMe - Bukkit Plugin configuration file
-# Copyright © 2012-2013 Visual Illusions Entertainment
-name: TipMe
-main: net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme.BukkitTipMe
-version: 2.1
+﻿# {name} - Bukkit Plugin configuration file
+# Copyright © {copyright.years} Visual Illusions Entertainment
+name: {name}
+main: {bukkit.main.class}
+version: {plugin.version}
 author: Visual Illusions Entertainment
-website: http://wiki.visualillusionsent.net/TipMe
+website: {wiki}
+
+# Visual Illusions Specific Stuff
+developers: {devs}
+build.number: {build}
+build.time: {build.time}
+program.status: {program.status}
+version.check.url: {version.check.url}
+issues.url: {issues}
+copyright.years: {copyright.years}
+# # #
 
 commands:
-  tipme:
+  tip:
     description: Main Tips Command
-    usage: /tipme <add|remove|getall|reload|tipserver> [index|tipmessage] - Tips commands
+    usage: /tip <add|remove|getall|reload|server> [index|message] - Tips commands
     permission: tipme.admin
-  tipme add:
+  tip add:
     description: Adds a tip to the list
-    usage: /tipme add <tip>
+    usage: /tip add <tip>
     permission: tipme.admin
-  tipme remove:
+  tip remove:
     description: Removes a tip from the list
-    usage: /tipme remove <index>
+    usage: /tip remove <index>
     permission: tipme.admin
-  tipme getall:
+  tip getall:
     description: Displays all Tips by index
-    usage: /tipme getall
+    usage: /tip getall
     permission: tipme.admin
-  tipme reload:
+  tip reload:
     description: Reloads tips from the datasource
-    usage: /tipme reload
+    usage: /tip reload
     permission: tipme.admin
-  tipme tipserver:
+  tip server:
     description: Sends a tip to all players online
-    usage: /tipme tipserver
+    usage: /tip tipserver
     permission: tipme.admin
-  tipserver:
-    description: Console Command to tip all players online
-    usage: tipserver
-    permission: tipme.admin
+  tipme:
+    description: TipMe Information command
+    usage: /tipme
     
 permissions:
   tipme.admin:

@@ -15,19 +15,24 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.tipme;
+package net.visualillusionsent.tipme.canary;
 
-import java.util.logging.Logger;
+import net.canarymod.chat.MessageReceiver;
+import net.visualillusionsent.tipme.TipReceiver;
 
 /**
- * TipMe plugin interface
+ * Canary Tip Receiver
  *
  * @author Jason (darkdiplomat)
  */
-public interface TipMe {
+public class CanaryTipReceiver implements TipReceiver {
+    private final MessageReceiver receiver;
 
-    Logger getLog();
+    CanaryTipReceiver(MessageReceiver receiver) {
+        this.receiver = receiver;
+    }
 
-    void broadcastTip(String tip);
-
+    public void send(String tip) {
+        receiver.message(tip);
+    }
 }

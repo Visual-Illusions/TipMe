@@ -17,32 +17,26 @@
  */
 package net.visualillusionsent.tipme;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.logging.Level;
 
 /**
  * TipMe Flatfile data source
- * 
+ *
  * @author Jason (darkdiplomat)
  */
-public class TipMeFlatfile implements TipMeDatasource{
+public class TipMeFlatfile implements TipMeDatasource {
 
     private final TipMe tipme;
     private final TipMeData data;
 
-    TipMeFlatfile(TipMe tipme, TipMeData data){
+    TipMeFlatfile(TipMe tipme, TipMeData data) {
         this.tipme = tipme;
         this.data = data;
     }
 
     @Override
-    public boolean loadTips(){
+    public boolean loadTips() {
         BufferedReader in = null;
         boolean toRet = true;
         try {
@@ -56,17 +50,14 @@ public class TipMeFlatfile implements TipMeDatasource{
                 }
             }
             tipme.getLog().info(String.format("Loaded %d tips.", num));
-        }
-        catch (IOException ioex) {
+        } catch (IOException ioex) {
             tipme.getLog().log(Level.SEVERE, "Unable to load Tips.txt", ioex);
             toRet = false;
-        }
-        finally {
+        } finally {
             if (in != null) {
                 try {
                     in.close();
-                }
-                catch (IOException ioex) {
+                } catch (IOException ioex) {
                     tipme.getLog().warning("Failed to close Tips.txt");
                 }
             }
@@ -75,18 +66,16 @@ public class TipMeFlatfile implements TipMeDatasource{
     }
 
     @Override
-    public boolean saveTip(String tip){
+    public boolean saveTip(String tip) {
         boolean toRet = true;
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileWriter(data.tipsFile, true));
             out.println(tip);
-        }
-        catch (IOException ioex) {
+        } catch (IOException ioex) {
             tipme.getLog().log(Level.SEVERE, "Unable to save tip to Tips.txt", ioex);
             toRet = false;
-        }
-        finally {
+        } finally {
             if (out != null) {
                 out.close();
             }
@@ -95,7 +84,7 @@ public class TipMeFlatfile implements TipMeDatasource{
     }
 
     @Override
-    public boolean removeTip(String tip){
+    public boolean removeTip(String tip) {
         boolean toRet = true;
         BufferedReader br = null;
         PrintWriter pw = null;
@@ -111,16 +100,13 @@ public class TipMeFlatfile implements TipMeDatasource{
                     pw.flush();
                 }
             }
-        }
-        catch (FileNotFoundException fnfex) {
+        } catch (FileNotFoundException fnfex) {
             tipme.getLog().log(Level.SEVERE, "Unable to find Tips.txt", fnfex);
             toRet = false;
-        }
-        catch (IOException ioex) {
+        } catch (IOException ioex) {
             tipme.getLog().log(Level.SEVERE, "Unable to save Tips.txt", ioex);
             toRet = false;
-        }
-        finally {
+        } finally {
             if (pw != null) {
                 pw.close();
             }
@@ -128,15 +114,13 @@ public class TipMeFlatfile implements TipMeDatasource{
                 if (br != null) {
                     br.close();
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 tipme.getLog().warning("Failed to close Tips.txt");
             }
             if (!tips.delete()) {
                 tipme.getLog().severe("Could not delete old tips file...");
                 toRet = false;
-            }
-            else if (!tempFile.renameTo(tips)) {
+            } else if (!tempFile.renameTo(tips)) {
                 tipme.getLog().severe("Could not rename tips tempfile...");
                 toRet = false;
             }

@@ -4,3 +4,5 @@
 /.project
 /.settings
 /buildNumber.properties
+/.idea
+*.iml

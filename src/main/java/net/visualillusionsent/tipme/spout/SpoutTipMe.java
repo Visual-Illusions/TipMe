@@ -15,57 +15,42 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.minecraft.server.mod.canary.plugin.tipme;
+package net.visualillusionsent.tipme.spout;
 
-import java.util.logging.Logger;
-import net.canarymod.Canary;
-import net.canarymod.api.entity.living.humanoid.Player;
-import net.canarymod.plugin.Plugin;
+import net.visualillusionsent.minecraft.plugin.spout.VisualIllusionsSpoutPlugin;
 import net.visualillusionsent.tipme.TipMe;
 import net.visualillusionsent.tipme.TipMeData;
+import org.spout.api.Server;
+import org.spout.api.Spout;
+import org.spout.api.command.annotated.AnnotatedCommandExecutorFactory;
 
-/**
- * TipMe main plugin class for CanaryMod
- * 
- * @author Jason (darkdiplomat)
- */
-public class CanaryTipMe extends Plugin implements TipMe{
+import java.util.logging.Logger;
+
+public final class SpoutTipMe extends VisualIllusionsSpoutPlugin implements TipMe {
+
     TipMeData tmd;
 
-    @Override
-    public boolean enable(){
+    public void onEnable() {
         try {
             if (tmd == null) {
                 tmd = new TipMeData(this);
-                new TipMeCommandListener(this);
+                AnnotatedCommandExecutorFactory.create(new TipMeCommandHandler(this));
             }
+        } catch (Throwable thrown) {
+            getLogger().severe("TipMe failed to start...");
         }
-        catch (Throwable thrown) {
-            getLogman().severe("TipMe failed to start...");
-            return false;
-        }
-        return true;
+    }
+
+    public void onDisable() {
     }
 
     @Override
-    public void disable(){
-        tmd.killTimer();
+    public Logger getLog() {
+        return this.getLogger();
     }
 
     @Override
-    public Logger getLog(){
-        return getLogman();
-    }
-
-    @Override
-    public void broadcastTip(String tip){
-        Canary.getServer().broadcastMessage(tip);
-    }
-
-    @Override
-    public void sendPlayerMessage(Object player, String tip){
-        if (player instanceof Player) {
-            ((Player) player).message(tip);
-        }
+    public void broadcastTip(String tip) {
+        ((Server) Spout.getEngine()).broadcastMessage(tip);
     }
 }

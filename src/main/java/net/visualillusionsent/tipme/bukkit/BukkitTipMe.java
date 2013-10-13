@@ -15,33 +15,43 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.spout.server.plugin.tipme;
+package net.visualillusionsent.tipme.bukkit;
 
-import java.util.logging.Logger;
+import net.visualillusionsent.minecraft.plugin.bukkit.VisualIllusionsBukkitPlugin;
 import net.visualillusionsent.tipme.TipMe;
 import net.visualillusionsent.tipme.TipMeData;
-import org.spout.api.Server;
-import org.spout.api.Spout;
-import org.spout.api.entity.Player;
-import org.spout.api.plugin.Plugin;
+import org.bukkit.Bukkit;
 
-public final class SpoutTipMe extends Plugin implements TipMe {
+import java.util.logging.Logger;
 
+/**
+ * TipMe main plugin class for Bukkit
+ *
+ * @author Jason (darkdiplomat)
+ */
+public final class BukkitTipMe extends VisualIllusionsBukkitPlugin implements TipMe {
     TipMeData tmd;
 
-    public void onEnable() {
+    @Override
+    public final void onEnable() {
         try {
             if (tmd == null) {
                 tmd = new TipMeData(this);
-
+                TipMeCommandExecutor exe = new TipMeCommandExecutor(this);
+                getCommand("tipme").setExecutor(exe);
+                getCommand("tip").setExecutor(exe);
             }
-        }
-        catch (Throwable thrown) {
+        } catch (Throwable thrown) {
             getLogger().severe("TipMe failed to start...");
         }
     }
 
-    public void onDisable() {}
+    @Override
+    public final void onDisable() {
+        if (tmd != null) {
+            tmd.killTimer();
+        }
+    }
 
     @Override
     public Logger getLog() {
@@ -50,11 +60,6 @@ public final class SpoutTipMe extends Plugin implements TipMe {
 
     @Override
     public void broadcastTip(String tip) {
-        ((Server) Spout.getEngine()).broadcastMessage(tip);
-    }
-
-    @Override
-    public void sendPlayerMessage(Object player, String tip) {
-        ((Player) player).sendMessage(tip);
+        Bukkit.getServer().broadcastMessage(tip);
     }
 }

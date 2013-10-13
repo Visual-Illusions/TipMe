@@ -25,10 +25,10 @@ import java.util.logging.Level;
 
 /**
  * TipMe MySQL data source
- * 
+ *
  * @author Jason (darkdiplomat)
  */
-final class TipMeMySQL implements TipMeDatasource{
+final class TipMeMySQL implements TipMeDatasource {
 
     private final TipMe tipme;
     private final TipMeData data;
@@ -38,21 +38,20 @@ final class TipMeMySQL implements TipMeDatasource{
     private final String tip_delete = "DELETE FROM TipMeTips WHERE Tip = ?";
     private final String tip_select = "SELECT * FROM TipMeTips";
 
-    TipMeMySQL(TipMe tipme, TipMeData data){
+    TipMeMySQL(TipMe tipme, TipMeData data) {
         this.tipme = tipme;
         this.data = data;
     }
 
     @Override
-    public final boolean loadTips(){
+    public final boolean loadTips() {
         boolean toRet = true;
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = data.getConnection();
-        }
-        catch (SQLException sqlex) {
+        } catch (SQLException sqlex) {
             tipme.getLog().log(Level.SEVERE, "Failed to get SQL Connection...", sqlex);
             toRet = false;
         }
@@ -68,12 +67,10 @@ final class TipMeMySQL implements TipMeDatasource{
                     num++;
                 }
                 String.format("Loaded %d tips.", num);
-            }
-            catch (SQLException sqlex) {
+            } catch (SQLException sqlex) {
                 tipme.getLog().log(Level.SEVERE, "Failed to load tips from TipMeTips table...", sqlex);
                 toRet = false;
-            }
-            finally {
+            } finally {
                 try {
                     if (rs != null && !rs.isClosed()) {
                         rs.close();
@@ -84,8 +81,7 @@ final class TipMeMySQL implements TipMeDatasource{
                     if (conn != null && !conn.isClosed()) {
                         conn.close();
                     }
-                }
-                catch (SQLException sqlex) {
+                } catch (SQLException sqlex) {
                     tipme.getLog().warning("Failed to close SQL Connection...");
                 }
             }
@@ -94,14 +90,13 @@ final class TipMeMySQL implements TipMeDatasource{
     }
 
     @Override
-    public final boolean saveTip(String tip){
+    public final boolean saveTip(String tip) {
         boolean toRet = true;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = data.getConnection();
-        }
-        catch (SQLException sqlex) {
+        } catch (SQLException sqlex) {
             tipme.getLog().log(Level.SEVERE, "Failed to get SQL Connection...", sqlex);
             toRet = false;
         }
@@ -110,12 +105,10 @@ final class TipMeMySQL implements TipMeDatasource{
                 ps = conn.prepareStatement(tip_insert);
                 ps.setString(1, tip);
                 ps.execute();
-            }
-            catch (SQLException sqlex) {
+            } catch (SQLException sqlex) {
                 tipme.getLog().log(Level.SEVERE, "Failed to insert tip into TipMeTips table...", sqlex);
                 toRet = false;
-            }
-            finally {
+            } finally {
                 try {
                     if (ps != null && !ps.isClosed()) {
                         ps.close();
@@ -123,8 +116,7 @@ final class TipMeMySQL implements TipMeDatasource{
                     if (conn != null && !conn.isClosed()) {
                         conn.close();
                     }
-                }
-                catch (SQLException sqlex) {
+                } catch (SQLException sqlex) {
                     tipme.getLog().warning("Failed to close SQL Connection...");
                 }
             }
@@ -133,14 +125,13 @@ final class TipMeMySQL implements TipMeDatasource{
     }
 
     @Override
-    public final boolean removeTip(String tip){
+    public final boolean removeTip(String tip) {
         boolean toRet = true;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = data.getConnection();
-        }
-        catch (SQLException sqlex) {
+        } catch (SQLException sqlex) {
             tipme.getLog().log(Level.SEVERE, "Failed to get SQL Connection...", sqlex);
             toRet = false;
         }
@@ -149,12 +140,10 @@ final class TipMeMySQL implements TipMeDatasource{
                 ps = conn.prepareStatement(tip_delete);
                 ps.setString(1, tip);
                 ps.execute();
-            }
-            catch (SQLException sqlex) {
+            } catch (SQLException sqlex) {
                 tipme.getLog().log(Level.SEVERE, "Failed to delete tip from TipMeTips table...", sqlex);
                 toRet = false;
-            }
-            finally {
+            } finally {
                 try {
                     if (ps != null && !ps.isClosed()) {
                         ps.close();
@@ -162,8 +151,7 @@ final class TipMeMySQL implements TipMeDatasource{
                     if (conn != null && !conn.isClosed()) {
                         conn.close();
                     }
-                }
-                catch (SQLException sqlex) {
+                } catch (SQLException sqlex) {
                     tipme.getLog().warning("Failed to close SQL Connection...");
                 }
             }

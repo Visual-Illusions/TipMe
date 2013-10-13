@@ -15,33 +15,35 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme;
+package net.visualillusionsent.tipme.bukkit;
 
-import java.util.logging.Level;
+import net.visualillusionsent.minecraft.plugin.bukkit.VisualIllusionsBukkitPluginInformationCommand;
 import net.visualillusionsent.tipme.TipMeData;
+import net.visualillusionsent.utils.VersionChecker;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 /**
  * TipMe Command Executor for Bukkit
- * 
+ *
  * @author Jason (darkdiplomat)
  */
-public class TipMeCommandExecutor implements CommandExecutor{
+public class TipMeCommandExecutor extends VisualIllusionsBukkitPluginInformationCommand implements CommandExecutor {
     private final TipMeData tmd;
-    private final BukkitTipMe tipme;
 
-    TipMeCommandExecutor(BukkitTipMe tipme){
+    TipMeCommandExecutor(BukkitTipMe tipme) {
+        super(tipme);
         this.tmd = tipme.tmd;
-        this.tipme = tipme;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-        if (label.equals("tipme")) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (label.equals("tip")) {
             try {
                 if (args.length > 0) {
                     if (args.length > 1) {
@@ -49,56 +51,60 @@ public class TipMeCommandExecutor implements CommandExecutor{
                             String tip = StringUtils.join(args, " ", 1, args.length);
                             if (tmd.createTip(tip)) {
                                 sender.sendMessage("\u00A72Tip Added!");
-                            }
-                            else {
+                            } else {
                                 sender.sendMessage("\u00A7CFailed to add tip... Error has been logged.");
                             }
                             return true;
                         }
-                    }
-                    else if (args[0].equalsIgnoreCase("remove")) {
+                    } else if (args[0].equalsIgnoreCase("remove")) {
                         if (args.length > 2) {
                             try {
                                 int index = Integer.parseInt(args[1]);
                                 boolean removed = tmd.removeTip(index);
                                 sender.sendMessage(removed ? "\u00A74Tip Removed!" : "\u00A7cFailed to remove tip... Error has been logged.");
-                            }
-                            catch (NumberFormatException nfe) {
+                            } catch (NumberFormatException nfe) {
                                 sender.sendMessage("\u00A7CInvaild Tip #");
                             }
                             return true;
                         }
-                    }
-                    else if (args[0].equalsIgnoreCase("getall")) {
-                        if (sender instanceof Player) {
-                            tmd.sendAll((Player) sender);
-                        }
-                        else {
-                            tmd.sendAllConsole();
-                        }
+                    } else if (args[0].equalsIgnoreCase("getall")) {
+                        tmd.sendAll(new BukkitTipReceiver(sender));
                         return true;
-                    }
-                    else if (args[0].equalsIgnoreCase("reload")) {
+                    } else if (args[0].equalsIgnoreCase("reload")) {
                         if (!tmd.reload()) {
                             sender.sendMessage("\u00A7CFailed to reload tips... Error has been logged.");
-                        }
-                        else {
+                        } else {
                             sender.sendMessage("\u00A72Tips reloaded!");
                         }
                         return true;
-                    }
-                    else if (args[0].equalsIgnoreCase("tipserver")) {
+                    } else if (args[0].equalsIgnoreCase("server")) {
                         tmd.sendTip();
                         return true;
                     }
                 }
-                sender.sendMessage("\u00A7CUsage: /tipme <add|remove|getall|reload|tipserver> [index|tipmessage] (index needed for removal, message need for adding)");
-            }
-            catch (Exception ex) {
+                sender.sendMessage("\u00A7CUsage: /tip <add|remove|getall|reload|server> [index|message] (index needed for removal, message need for adding)");
+            } catch (Exception ex) {
                 sender.sendMessage("\u00A7CAn unhandled exception has occurred in TipMe! Error has been logged!");
-                tipme.getLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
+                plugin.getLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
             }
             return true;
+        }
+        else if (label.equals("tipme")){
+            for (String msg : about) {
+                if (msg.equals("$VERSION_CHECK$")) {
+                    VersionChecker vc = plugin.getVersionChecker();
+                    Boolean isLatest = vc.isLatest();
+                    if (isLatest == null) {
+                        sender.sendMessage(center(ChatColor.DARK_GRAY.toString().concat("VersionCheckerError: ").concat(vc.getErrorMessage())));
+                    } else if (!isLatest) {
+                        sender.sendMessage(center(ChatColor.DARK_GRAY.toString().concat(vc.getUpdateAvailibleMessage())));
+                    } else {
+                        sender.sendMessage(center(ChatColor.GREEN.toString().concat("Latest Version Installed")));
+                    }
+                } else {
+                    sender.sendMessage(msg);
+                }
+            }
         }
         return false;
     }

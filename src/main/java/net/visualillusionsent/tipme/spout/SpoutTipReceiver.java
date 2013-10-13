@@ -15,19 +15,24 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.tipme;
+package net.visualillusionsent.tipme.spout;
 
-import java.util.logging.Logger;
+import net.visualillusionsent.tipme.TipReceiver;
+import org.spout.api.command.CommandSource;
 
 /**
- * TipMe plugin interface
+ * Spout Tip Receiver
  *
  * @author Jason (darkdiplomat)
  */
-public interface TipMe {
+public class SpoutTipReceiver implements TipReceiver {
+    private final CommandSource receiver;
 
-    Logger getLog();
+    SpoutTipReceiver(CommandSource receiver) {
+        this.receiver = receiver;
+    }
 
-    void broadcastTip(String tip);
-
+    public void send(String tip) {
+        receiver.sendMessage(tip);
+    }
 }

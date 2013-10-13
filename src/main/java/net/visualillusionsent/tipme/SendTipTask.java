@@ -21,17 +21,17 @@ import java.util.TimerTask;
 
 /**
  * TipMe Send tip task
- * 
+ *
  * @author Jason (darkdiplomat)
  */
-final class SendTipTask extends TimerTask{
+final class SendTipTask extends TimerTask {
     private final TipMeData tmd;
 
-    SendTipTask(TipMeData tmd){
+    SendTipTask(TipMeData tmd) {
         this.tmd = tmd;
     }
 
-    public final void run(){
+    public final void run() {
         tmd.sendTip();
     }
 }

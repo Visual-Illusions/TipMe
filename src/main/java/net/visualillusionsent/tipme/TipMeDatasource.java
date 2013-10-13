@@ -19,10 +19,10 @@ package net.visualillusionsent.tipme;
 
 /**
  * TipMe Datasource interface
- * 
+ *
  * @author Jason (darkdiplomat)
  */
-interface TipMeDatasource{
+interface TipMeDatasource {
 
     boolean loadTips();
 

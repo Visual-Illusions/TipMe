@@ -17,17 +17,10 @@
  */
 package net.visualillusionsent.tipme;
 
-import java.util.logging.Logger;
-
 /**
- * TipMe plugin interface
- *
  * @author Jason (darkdiplomat)
  */
-public interface TipMe {
+public interface TipReceiver {
 
-    Logger getLog();
-
-    void broadcastTip(String tip);
-
+    void send(String tip);
 }

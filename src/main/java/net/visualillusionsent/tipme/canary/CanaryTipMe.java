@@ -15,57 +15,49 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.minecraft.server.mod.bukkit.plugin.tipme;
+package net.visualillusionsent.tipme.canary;
 
-import java.util.logging.Logger;
+import net.canarymod.Canary;
+import net.visualillusionsent.minecraft.plugin.canary.VisualIllusionsCanaryPlugin;
 import net.visualillusionsent.tipme.TipMe;
 import net.visualillusionsent.tipme.TipMeData;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Logger;
 
 /**
- * TipMe main plugin class for Bukkit
- * 
+ * TipMe main plugin class for CanaryMod
+ *
  * @author Jason (darkdiplomat)
  */
-public final class BukkitTipMe extends JavaPlugin implements TipMe{
+public class CanaryTipMe extends VisualIllusionsCanaryPlugin implements TipMe {
     TipMeData tmd;
 
     @Override
-    public final void onEnable(){
+    public boolean enable() {
         try {
             if (tmd == null) {
                 tmd = new TipMeData(this);
-                getCommand("tipme").setExecutor(new TipMeCommandExecutor(this));
+                new TipMeCommandListener(this);
             }
+        } catch (Throwable thrown) {
+            getLogman().severe("TipMe failed to start...");
+            return false;
         }
-        catch (Throwable thrown) {
-            getLogger().severe("TipMe failed to start...");
-        }
+        return true;
     }
 
     @Override
-    public final void onDisable(){
-        if (tmd != null) {
-            tmd.killTimer();
-        }
+    public void disable() {
+        tmd.killTimer();
     }
 
     @Override
-    public Logger getLog(){
-        return this.getLogger();
+    public Logger getLog() {
+        return getLogman();
     }
 
     @Override
-    public void broadcastTip(String tip){
-        Bukkit.getServer().broadcastMessage(tip);
-    }
-
-    @Override
-    public void sendPlayerMessage(Object player, String tip){
-        if (player instanceof Player) {
-            ((Player) player).sendMessage(tip);
-        }
+    public void broadcastTip(String tip) {
+        Canary.getServer().broadcastMessage(tip);
     }
 }

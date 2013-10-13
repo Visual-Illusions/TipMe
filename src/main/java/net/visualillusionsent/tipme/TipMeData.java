@@ -17,12 +17,7 @@
  */
 package net.visualillusionsent.tipme;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -33,10 +28,10 @@ import java.util.Timer;
 
 /**
  * TipMe data handler
- * 
+ *
  * @author Jason (darkdiplomat)
  */
-public final class TipMeData{
+public final class TipMeData {
 
     private final TipMe tipme;
     private final boolean randomize;
@@ -56,7 +51,7 @@ public final class TipMeData{
 
     final String tipsFile = "config/TipMe/Tips.txt";
 
-    public TipMeData(TipMe tipme){
+    public TipMeData(TipMe tipme) {
         this.tipme = tipme;
         if (!makeFiles()) {
             throw new InternalError();
@@ -77,11 +72,10 @@ public final class TipMeData{
         }
     }
 
-    private final boolean load(){
+    private final boolean load() {
         if (useMySQL) {
             tmds = new TipMeMySQL(tipme, this);
-        }
-        else {
+        } else {
             tmds = new TipMeFlatfile(tipme, this);
         }
 
@@ -97,7 +91,7 @@ public final class TipMeData{
         return true;
     }
 
-    public final boolean reload(){
+    public final boolean reload() {
         ArrayList<String> backup = new ArrayList<String>(tips);
         Collections.copy(backup, tips);
         tips.clear();
@@ -109,11 +103,11 @@ public final class TipMeData{
         return true;
     }
 
-    public final Connection getConnection() throws SQLException{
+    public final Connection getConnection() throws SQLException {
         return DriverManager.getConnection(sqlDriveURL.concat(sqlDatabase), sqlUsername, sqlPassword);
     }
 
-    public final boolean createTip(String tip){
+    public final boolean createTip(String tip) {
         if (tmds.saveTip(tip)) {
             tips.add(parseTip(tip));
             return true;
@@ -121,7 +115,7 @@ public final class TipMeData{
         return false;
     }
 
-    public final boolean removeTip(int index){
+    public final boolean removeTip(int index) {
         if (index < tips.size() && index > -1) {
             if (tmds.removeTip(tips.get(index))) {
                 tips.remove(index);
@@ -131,45 +125,25 @@ public final class TipMeData{
         return false;
     }
 
-    public final void sendAll(Object player){
+    public final void sendAll(TipReceiver receiver) {
         if (!tips.isEmpty()) {
             synchronized (tips) {
                 int index = 0;
                 for (String tip : tips) {
                     String[] parse = tip.split(colorPre + "[Zz]");
-                    tipme.sendPlayerMessage(player, "\u00A76#" + index + ":\u00A7r " + parse[0]);
+                    receiver.send("\u00A76#" + index + ":\u00A7r " + parse[0]);
                     for (int lnindex = 1; lnindex < parse.length; lnindex++) {
-                        tipme.sendPlayerMessage(player, "  ".concat(parse[lnindex]));
+                        receiver.send("  ".concat(parse[lnindex]));
                     }
                     index++;
                 }
             }
-        }
-        else {
-            tipme.sendPlayerMessage(player, "\u00A7CNo tips to display...");
-        }
-    }
-
-    public void sendAllConsole(){
-        if (!tips.isEmpty()) {
-            synchronized (tips) {
-                int index = 0;
-                for (String tip : tips) {
-                    String[] parse = tip.split(colorPre.concat("[Zz]"));
-                    tipme.getLog().info("\u00A76#" + index + ":\u00A7r " + parse[0]);
-                    for (int lnindex = 1; lnindex < parse.length; lnindex++) {
-                        tipme.getLog().info("\t".concat(parse[lnindex]));
-                    }
-                    index++;
-                }
-            }
-        }
-        else {
-            tipme.getLog().info("\u00A7CNo tips to display...");
+        } else {
+            receiver.send("\u00A7CNo tips to display...");
         }
     }
 
-    public final void sendTip(){
+    public final void sendTip() {
         if (tips.size() > 0) {
             String tippy = null;
             if (currenttip >= tips.size()) {
@@ -190,17 +164,17 @@ public final class TipMeData{
         }
     }
 
-    public final void killTimer(){
+    public final void killTimer() {
         if (tipTime != null) {
             tipTime.cancel();
         }
     }
 
-    final void addFromSource(String tip){
+    final void addFromSource(String tip) {
         tips.add(parseTip(tip));
     }
 
-    private final boolean makeFiles(){
+    private final boolean makeFiles() {
         File checkDir = new File(tipsFile.replace("Tips.txt", ""));
         File checkTipsFile = new File(tipsFile);
         File checkTipsProps = new File(tipspropsFile);
@@ -213,8 +187,7 @@ public final class TipMeData{
         if (!checkTipsFile.exists()) {
             try {
                 checkTipsFile.createNewFile();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 tipme.getLog().severe("Failed to make Tips.txt");
                 return false;
             }
@@ -260,8 +233,7 @@ public final class TipMeData{
                 write.newLine();
                 write.flush();
                 write.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 return false;
             }
         }
@@ -269,13 +241,13 @@ public final class TipMeData{
         try {
             tipsprops.load(new FileInputStream(tipspropsFile));
             return true;
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
         }
-        catch (FileNotFoundException e) {}
-        catch (IOException e) {}
         return false;
     }
 
-    private final String parseTip(String tip){
+    private final String parseTip(String tip) {
         return tip.replaceAll(colorPre + "([0-9A-FK-ORa-fk-or])", "\u00A7$1");
     }
 }

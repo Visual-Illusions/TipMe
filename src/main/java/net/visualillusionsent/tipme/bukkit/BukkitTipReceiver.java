@@ -15,19 +15,27 @@
  * You should have received a copy of the GNU General Public License along with TipMe.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
-package net.visualillusionsent.tipme;
+package net.visualillusionsent.tipme.bukkit;
 
-import java.util.logging.Logger;
+import net.visualillusionsent.tipme.TipReceiver;
+import org.bukkit.command.CommandSender;
 
 /**
- * TipMe plugin interface
+ * Bukkit Tip Receiver
  *
  * @author Jason (darkdiplomat)
  */
-public interface TipMe {
+public class BukkitTipReceiver implements TipReceiver {
 
-    Logger getLog();
+    private final CommandSender receiver;
 
-    void broadcastTip(String tip);
+    BukkitTipReceiver(CommandSender receiver) {
+        this.receiver = receiver;
+    }
 
+
+    @Override
+    public void send(String tip) {
+        receiver.sendMessage(tip);
+    }
 }
