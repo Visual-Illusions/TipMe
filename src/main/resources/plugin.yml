@@ -1,20 +1,12 @@
 ﻿# {name} - Bukkit Plugin configuration file
 # Copyright © {copyright.years} Visual Illusions Entertainment
+# Licensed under the {gpl.type}
+
 name: {name}
-main: {bukkit.main.class}
 version: {plugin.version}
+main: {bukkit.main.class}
 author: Visual Illusions Entertainment
 website: {wiki}
-
-# Visual Illusions Specific Stuff
-developers: {devs}
-build.number: {build}
-build.time: {build.time}
-program.status: {program.status}
-version.check.url: {version.check.url}
-issues.url: {issues}
-copyright.years: {copyright.years}
-# # #
 
 commands:
   tip:

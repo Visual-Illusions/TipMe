@@ -1,18 +1,18 @@
 /*
  * This file is part of TipMe.
  *
- * Copyright © 2012-2013 Visual Illusions Entertainment
+ * Copyright © 2012-2014 Visual Illusions Entertainment
  *
  * TipMe is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
  *
- * TipMe is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with TipMe.
+ * You should have received a copy of the GNU General Public License along with this program.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
 package net.visualillusionsent.tipme.canary;
@@ -42,17 +42,17 @@ public final class TipMeCommandListener extends VisualIllusionsCanaryPluginInfor
         Canary.commands().registerCommands(this, tipme, false);
     }
 
-    @Command(aliases = {"tip"},
+    @Command(aliases = { "tip" },
             description = "TipMe command",
-            permissions = {"tipme.admin"},
+            permissions = { "tipme.admin" },
             toolTip = "/tip <add|remove|getall|reload|server> [index|message]")
     public final void main(MessageReceiver msgrec, String[] args) {
         msgrec.notice("Usage: /tip <add|remove|getall|reload|server> [index|message] (index needed for removal, message need for adding)");
     }
 
-    @Command(aliases = {"add"},
+    @Command(aliases = { "add" },
             description = "TipMe add tip command",
-            permissions = {"tipme.admin"},
+            permissions = { "tipme.admin" },
             toolTip = "/tip add <message>",
             parent = "tip")
     public final void add(MessageReceiver msgrec, String[] args) {
@@ -63,14 +63,15 @@ public final class TipMeCommandListener extends VisualIllusionsCanaryPluginInfor
         String tip = StringUtils.joinString(args, " ", 1);
         if (data.createTip(tip)) {
             msgrec.message("\u00A72Tip Added!");
-        } else {
+        }
+        else {
             msgrec.notice("Failed to add tip... Error has been logged.");
         }
     }
 
-    @Command(aliases = {"remove"},
+    @Command(aliases = { "remove" },
             description = "TipMe remove tip command",
-            permissions = {"tipme.admin"},
+            permissions = { "tipme.admin" },
             toolTip = "/tip remove <index>",
             parent = "tip")
     public final void remove(MessageReceiver msgrec, String[] args) {
@@ -79,46 +80,48 @@ public final class TipMeCommandListener extends VisualIllusionsCanaryPluginInfor
                 int index = Integer.parseInt(args[1]);
                 boolean removed = data.removeTip(index);
                 msgrec.message(removed ? "\u00A74Tip Removed!" : "\u00A7cFailed to remove tip... Error has been logged.");
-            } catch (NumberFormatException nfe) {
+            }
+            catch (NumberFormatException nfe) {
                 msgrec.notice("Invalid Tip #");
             }
         }
     }
 
-    @Command(aliases = {"getall"},
+    @Command(aliases = { "getall" },
             description = "TipMe getall command",
-            permissions = {"tipme.admin"},
+            permissions = { "tipme.admin" },
             toolTip = "/tip getall",
             parent = "tip")
     public final void getall(MessageReceiver msgrec, String[] args) {
         data.sendAll(new CanaryTipReceiver(msgrec));
     }
 
-    @Command(aliases = {"reload"},
+    @Command(aliases = { "reload" },
             description = "TipMe reload command",
-            permissions = {"tipme.admin"},
+            permissions = { "tipme.admin" },
             toolTip = "/tipme reload",
             parent = "tipme")
     public final void reload(MessageReceiver msgrec, String[] args) {
         if (!data.reload()) {
             msgrec.notice("Failed to reload tips... Error has been logged.");
-        } else {
+        }
+        else {
             msgrec.message("\u00A72Tips reloaded!");
         }
     }
 
-    @Command(aliases = {"server"},
+    @Command(aliases = { "server" },
             description = "TipMe tip server command",
-            permissions = {"tipme.admin"},
+            permissions = { "tipme.admin" },
             toolTip = "/tip server",
             parent = "tip")
     public final void tipserver(MessageReceiver msgrec, String[] args) {
         data.sendTip();
     }
 
-    @Command(aliases = {"tipme"},
+    @Command(aliases = { "tipme" },
             description = "TipMe information command",
-            permissions = {""},
+            permissions = { "" },
             toolTip = "/tipme")
     public void infomationCommand(MessageReceiver msgrec, String[] cmd) {
         for (String msg : about) {
@@ -127,12 +130,15 @@ public final class TipMeCommandListener extends VisualIllusionsCanaryPluginInfor
                 Boolean isLatest = vc.isLatest();
                 if (isLatest == null) {
                     msgrec.message(center(TextFormat.GRAY.concat("VersionCheckerError: ").concat(vc.getErrorMessage())));
-                } else if (!isLatest) {
+                }
+                else if (!isLatest) {
                     msgrec.message(center(TextFormat.GRAY.concat(vc.getUpdateAvailibleMessage())));
-                } else {
+                }
+                else {
                     msgrec.message(center(TextFormat.LIGHT_GREEN.concat("Latest Version Installed")));
                 }
-            } else {
+            }
+            else {
                 msgrec.message(msg);
             }
         }

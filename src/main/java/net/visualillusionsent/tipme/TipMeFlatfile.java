@@ -1,23 +1,29 @@
 /*
  * This file is part of TipMe.
  *
- * Copyright © 2012-2013 Visual Illusions Entertainment
+ * Copyright © 2012-2014 Visual Illusions Entertainment
  *
  * TipMe is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
  *
- * TipMe is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with TipMe.
+ * You should have received a copy of the GNU General Public License along with this program.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
 package net.visualillusionsent.tipme;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 
 /**
@@ -50,14 +56,17 @@ public class TipMeFlatfile implements TipMeDatasource {
                 }
             }
             tipme.getLog().info(String.format("Loaded %d tips.", num));
-        } catch (IOException ioex) {
+        }
+        catch (IOException ioex) {
             tipme.getLog().log(Level.SEVERE, "Unable to load Tips.txt", ioex);
             toRet = false;
-        } finally {
+        }
+        finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException ioex) {
+                }
+                catch (IOException ioex) {
                     tipme.getLog().warning("Failed to close Tips.txt");
                 }
             }
@@ -72,10 +81,12 @@ public class TipMeFlatfile implements TipMeDatasource {
         try {
             out = new PrintWriter(new FileWriter(data.tipsFile, true));
             out.println(tip);
-        } catch (IOException ioex) {
+        }
+        catch (IOException ioex) {
             tipme.getLog().log(Level.SEVERE, "Unable to save tip to Tips.txt", ioex);
             toRet = false;
-        } finally {
+        }
+        finally {
             if (out != null) {
                 out.close();
             }
@@ -100,13 +111,16 @@ public class TipMeFlatfile implements TipMeDatasource {
                     pw.flush();
                 }
             }
-        } catch (FileNotFoundException fnfex) {
+        }
+        catch (FileNotFoundException fnfex) {
             tipme.getLog().log(Level.SEVERE, "Unable to find Tips.txt", fnfex);
             toRet = false;
-        } catch (IOException ioex) {
+        }
+        catch (IOException ioex) {
             tipme.getLog().log(Level.SEVERE, "Unable to save Tips.txt", ioex);
             toRet = false;
-        } finally {
+        }
+        finally {
             if (pw != null) {
                 pw.close();
             }
@@ -114,13 +128,15 @@ public class TipMeFlatfile implements TipMeDatasource {
                 if (br != null) {
                     br.close();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 tipme.getLog().warning("Failed to close Tips.txt");
             }
             if (!tips.delete()) {
                 tipme.getLog().severe("Could not delete old tips file...");
                 toRet = false;
-            } else if (!tempFile.renameTo(tips)) {
+            }
+            else if (!tempFile.renameTo(tips)) {
                 tipme.getLog().severe("Could not rename tips tempfile...");
                 toRet = false;
             }

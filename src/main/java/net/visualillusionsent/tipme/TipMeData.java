@@ -1,23 +1,28 @@
 /*
  * This file is part of TipMe.
  *
- * Copyright © 2012-2013 Visual Illusions Entertainment
+ * Copyright © 2012-2014 Visual Illusions Entertainment
  *
  * TipMe is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
  *
- * TipMe is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with TipMe.
+ * You should have received a copy of the GNU General Public License along with this program.
  * If not, see http://www.gnu.org/licenses/gpl.html.
  */
 package net.visualillusionsent.tipme;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -75,7 +80,8 @@ public final class TipMeData {
     private final boolean load() {
         if (useMySQL) {
             tmds = new TipMeMySQL(tipme, this);
-        } else {
+        }
+        else {
             tmds = new TipMeFlatfile(tipme, this);
         }
 
@@ -138,7 +144,8 @@ public final class TipMeData {
                     index++;
                 }
             }
-        } else {
+        }
+        else {
             receiver.send("\u00A7CNo tips to display...");
         }
     }
@@ -185,7 +192,8 @@ public final class TipMeData {
         if (!checkTipsFile.exists()) {
             try {
                 checkTipsFile.createNewFile();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 tipme.getLog().severe("Failed to make Tips.txt");
                 return false;
             }
@@ -213,7 +221,8 @@ public final class TipMeData {
                 printer.println("mysql.db.url=url:port/database");
                 printer.flush();
                 printer.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 return false;
             }
         }
@@ -221,8 +230,10 @@ public final class TipMeData {
         try {
             tipsprops.load(new FileInputStream(tipspropsFile));
             return true;
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
+        }
+        catch (FileNotFoundException e) {
+        }
+        catch (IOException e) {
         }
         return false;
     }
