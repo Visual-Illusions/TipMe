@@ -17,19 +17,20 @@
  */
 package net.visualillusionsent.tipme;
 
+import net.visualillusionsent.utils.FileUtils;
+import net.visualillusionsent.utils.JarUtils;
+import net.visualillusionsent.utils.PropertiesFile;
+import net.visualillusionsent.utils.UtilityException;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TipMe data handler
@@ -39,61 +40,39 @@ import java.util.Timer;
 public final class TipMeData {
 
     private final TipMe tipme;
-    private final boolean randomize;
-    private final boolean useMySQL;
-    private final boolean useScheduler;
-    private final long tipDelay;
-    private final String colorPre;
-    private final String prefix;
-    private final String tipspropsFile = "config/TipMe/TipMe.cfg";
-    private final String sqlDriveURL = "jdbc:mysql://";
     private final ArrayList<String> tips = new ArrayList<String>();
-    private Properties tipsprops;
+    private final PropertiesFile cfg;
     private TipMeDatasource tmds;
-    private int currenttip;
-    private String sqlUsername, sqlPassword, sqlDatabase;
-    private Timer tipTime;
-
-    final String tipsFile = "config/TipMe/Tips.txt";
+    private Timer tipTimer;
+    private int cIndex;
 
     public TipMeData(TipMe tipme) {
         this.tipme = tipme;
         if (!makeFiles()) {
             throw new InternalError();
         }
-
-        colorPre = tipsprops.getProperty("color.prefix", "@");
-        prefix = parseTip(tipsprops.getProperty("tip.prefix", "@2ProTip:"));
-        useScheduler = Boolean.parseBoolean(tipsprops.getProperty("use.internal.schedule", "true"));
-        tipDelay = Long.parseLong(tipsprops.getProperty("internal.schedule.delay", "5")) * 60000;
-        randomize = Boolean.parseBoolean(tipsprops.getProperty("randomize", "false"));
-        useMySQL = Boolean.parseBoolean(tipsprops.getProperty("use.mysql", "false"));
-        sqlUsername = tipsprops.getProperty("mysql.username", "root");
-        sqlPassword = tipsprops.getProperty("mysql.password", "password");
-        sqlDatabase = tipsprops.getProperty("mysql.db.url", "url:port/database");
-
+        cfg = new PropertiesFile("config/TipMe/TipMe.cfg");
+        testProperties();
         if (!load()) {
             throw new InternalError();
         }
     }
 
     private boolean load() {
-        if (useMySQL) {
+        if (cfg.getBoolean("use.mysql")) {
             tmds = new TipMeMySQL(tipme, this);
         }
         else {
             tmds = new TipMeFlatfile(tipme, this);
         }
-
         if (!tmds.loadTips()) {
             return false;
         }
-
-        if (useScheduler) {
-            tipTime = new Timer();
-            tipTime.scheduleAtFixedRate(new SendTipTask(this), tipDelay, tipDelay);
+        if (cfg.getBoolean("use.internal.schedule")) {
+            long delay = TimeUnit.MINUTES.toMillis(cfg.getLong("internal.schedule.delay"));
+            tipTimer = new Timer();
+            tipTimer.scheduleAtFixedRate(new SendTipTask(this), delay, delay);
         }
-
         return true;
     }
 
@@ -105,11 +84,12 @@ public final class TipMeData {
             Collections.copy(tips, backup);
             return false;
         }
+        cfg.reload();
         return true;
     }
 
     public final Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(sqlDriveURL.concat(sqlDatabase), sqlUsername, sqlPassword);
+        return DriverManager.getConnection("jdbc:mysql://".concat(cfg.getString("mysql.db.url")), cfg.getString("mysql.username"), cfg.getString("mysql.password"));
     }
 
     public final boolean createTip(String tip) {
@@ -131,11 +111,12 @@ public final class TipMeData {
     }
 
     public final void sendAll(TipReceiver receiver) {
+        char cChar = cfg.getCharacter("color.prefix");
         if (!tips.isEmpty()) {
             synchronized (tips) {
                 int index = 0;
                 for (String tip : tips) {
-                    String[] parse = tip.split(colorPre.concat("[Zz]"));
+                    String[] parse = tip.split(cChar + "[Zz]");
                     receiver.send("\u00A76#" + index + ":\u00A7r " + parse[0]);
                     for (int lnindex = 1; lnindex < parse.length; lnindex++) {
                         receiver.send("  ".concat(parse[lnindex]));
@@ -150,17 +131,19 @@ public final class TipMeData {
     }
 
     public final void sendTip() {
+        char cChar = cfg.getCharacter("color.prefix");
+        String prefix = cfg.getString("tip.prefix");
         if (tips.size() > 0) {
-            if (currenttip >= tips.size()) {
-                if (randomize) {
+            if (cIndex >= tips.size()) {
+                if (cfg.getBoolean("randomize")) {
                     Collections.shuffle(tips);
                 }
-                currenttip = 0;
+                cIndex = 0;
             }
-            String tippy = tips.get(currenttip++);
+            String tippy = tips.get(cIndex++);
             if (tippy != null) {
-                String[] parse = tippy.split(colorPre.concat("[Zz]"));
-                tipme.broadcastTip(prefix.concat("\u00A7r ").concat(parse[0]));
+                String[] parse = tippy.split(cChar + "[Zz]");
+                tipme.broadcastTip(prefix.concat(parse[0]));
                 for (int index = 1; index < parse.length; index++) {
                     tipme.broadcastTip("  ".concat(parse[index]));
                 }
@@ -169,8 +152,8 @@ public final class TipMeData {
     }
 
     public final void killTimer() {
-        if (tipTime != null) {
-            tipTime.cancel();
+        if (tipTimer != null) {
+            tipTimer.cancel();
         }
     }
 
@@ -178,68 +161,51 @@ public final class TipMeData {
         tips.add(parseTip(tip));
     }
 
+    private String parseTip(String tip) {
+        return tip.replaceAll(cfg.getCharacter("color.prefix") + "([0-9A-FK-ORa-fk-or])", "\u00A7$1");
+    }
+
     private boolean makeFiles() {
-        File checkDir = new File(tipsFile.replace("Tips.txt", ""));
-        File checkTipsFile = new File(tipsFile);
-        File checkTipsProps = new File(tipspropsFile);
+        File checkDir = new File("config/TipMe/");
         if (!checkDir.exists()) {
             if (!checkDir.mkdirs()) {
                 tipme.getPluginLogger().severe("Unable to create TipMe configuration directory...");
                 return false;
             }
         }
-        if (!checkTipsFile.exists()) {
-            try {
-                checkTipsFile.createNewFile();
-            }
-            catch (IOException e) {
-                tipme.getPluginLogger().severe("Failed to make Tips.txt");
-                return false;
-            }
-        }
-        if (!checkTipsProps.exists()) {
-            try {
-                PrintWriter printer = new PrintWriter(new FileWriter(checkTipsProps));
-                printer.println("#Sets the String to convert into \u00A7 (Default: @)");
-                printer.println("color.prefix=@");
-                printer.println("#The String to use to prefix Tips (Default: @2ProTip:)");
-                printer.println("tip.prefix=@2ProTip:");
-                printer.println("#Specifies if the Tips should be displayed using the internal scheduler");
-                printer.println("use.internal.schedule=true");
-                printer.println("#The time in minutes between displaying tips (Default: 5)");
-                printer.println("internal.schedule.delay=5");
-                printer.println("#Specifies whether to randomize the tips or not (Default: true)");
-                printer.println("randomize=false");
-                printer.println("#Specifies whether to store Tips in a MySQL Table (Default: false)");
-                printer.println("use.mysql=false");
-                printer.println("#Specifies the user name to connect to the MySQL Database (Default: root)");
-                printer.println("mysql.username=root");
-                printer.println("#Specifies the password to use to connect to the MySQL Database (Default: password)");
-                printer.println("mysql.password=password");
-                printer.println("#Specifies the URL of the MySQL Database in \"url:port/database\" format");
-                printer.println("mysql.db.url=url:port/database");
-                printer.flush();
-                printer.close();
-            }
-            catch (IOException e) {
-                return false;
-            }
-        }
-        tipsprops = new Properties();
+        File checkTipsFile = new File(checkDir, "Tips.txt");
         try {
-            tipsprops.load(new FileInputStream(tipspropsFile));
-            return true;
+            if (!checkTipsFile.exists() && !checkTipsFile.createNewFile()) {
+                return false;
+            }
         }
-        catch (FileNotFoundException e) {
-            // IGNORED
+        catch (IOException ioex) {
+            tipme.getPluginLogger().severe("Failed to make Tips.txt");
+            return false;
         }
-        catch (IOException e) {
-            // IGNORED
+        File checkTipsProps = new File(checkDir, "TipMe.cfg");
+        try {
+            if (!checkTipsProps.exists()) {
+                FileUtils.cloneFileFromJar(JarUtils.getJarPath(getClass()), "resources/default.cfg", checkTipsProps.getAbsolutePath());
+            }
         }
-        return false;
+        catch (UtilityException uex) {
+            tipme.getPluginLogger().severe("Failed to make TipMe.cfg");
+            return false;
+        }
+        return true;
     }
 
-    private final String parseTip(String tip) {
-        return tip.replaceAll(colorPre + "([0-9A-FK-ORa-fk-or])", "\u00A7$1");
+    private void testProperties() {
+        cfg.getCharacter("color.prefix", '@');
+        cfg.getString("tip.prefix", "@2ProTip:");
+        cfg.getBoolean("use.internal.schedule", true);
+        cfg.getLong("internal.schedule.delay", 5L);
+        cfg.getBoolean("randomize", false);
+        cfg.getBoolean("use.mysql", false);
+        cfg.getString("mysql.username", "root");
+        cfg.getString("mysql.password", "password");
+        cfg.getString("mysql.db.url", "url:port/database");
     }
+
 }

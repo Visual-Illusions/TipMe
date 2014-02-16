@@ -17,10 +17,18 @@
  */
 package net.visualillusionsent.tipme.bukkit;
 
+import net.visualillusionsent.minecraft.plugin.VisualIllusionsMinecraftPlugin;
 import net.visualillusionsent.minecraft.plugin.bukkit.VisualIllusionsBukkitPlugin;
 import net.visualillusionsent.tipme.TipMe;
 import net.visualillusionsent.tipme.TipMeData;
 import org.bukkit.Bukkit;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * TipMe main plugin class for Bukkit
@@ -29,6 +37,26 @@ import org.bukkit.Bukkit;
  */
 public final class BukkitTipMe extends VisualIllusionsBukkitPlugin implements TipMe {
     TipMeData tmd;
+
+    static {
+        // Check for VIUtils/JDOM2, download as necessary
+        Manifest mf = null;
+        try {
+            mf = new JarFile(BukkitTipMe.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getManifest();
+        }
+        catch (IOException ex) {
+            // NullPointerException will happen anyways
+        }
+        String viutils_version = mf.getMainAttributes().getValue("VIUtils-Version");
+        String vi_url = MessageFormat.format("http://repo2.visualillusionsent.net/repository/public/net/visualillusionsent/viutils/{0}/viutils-{0}.jar", viutils_version);
+        try {
+            VisualIllusionsMinecraftPlugin.getLibrary("TipMe", "viutils", viutils_version, new URL(vi_url), Bukkit.getLogger());
+        }
+        catch (MalformedURLException e) {
+            // the URLs are correct
+        }
+        //
+    }
 
     @Override
     public final void onEnable() {
@@ -40,6 +68,7 @@ public final class BukkitTipMe extends VisualIllusionsBukkitPlugin implements Ti
         }
         catch (Throwable thrown) {
             getLogger().severe("TipMe failed to start...");
+            die();
         }
     }
 

@@ -33,11 +33,6 @@ final class TipMeMySQL implements TipMeDatasource {
     private final TipMe tipme;
     private final TipMeData data;
 
-    private final String tip_tablecreate = "CREATE TABLE IF NOT EXISTS `TipMeTips` (`id` INT(255) NOT NULL AUTO_INCREMENT, `Tip` TEXT NOT NULL, PRIMARY KEY (`id`))";
-    private final String tip_insert = "INSERT INTO TipMeTips (Tip) VALUES(?)";
-    private final String tip_delete = "DELETE FROM TipMeTips WHERE Tip = ?";
-    private final String tip_select = "SELECT * FROM TipMeTips";
-
     TipMeMySQL(TipMe tipme, TipMeData data) {
         this.tipme = tipme;
         this.data = data;
@@ -59,9 +54,9 @@ final class TipMeMySQL implements TipMeDatasource {
         if (conn != null) {
             try {
                 int num = 0;
-                ps = conn.prepareStatement(tip_tablecreate);
+                ps = conn.prepareStatement("CREATE TABLE IF NOT EXISTS `TipMeTips` (`id` INT(255) NOT NULL AUTO_INCREMENT, `Tip` TEXT NOT NULL, PRIMARY KEY (`id`))");
                 ps.execute();
-                ps = conn.prepareStatement(tip_select);
+                ps = conn.prepareStatement("SELECT * FROM TipMeTips");
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     data.addFromSource(rs.getString("Tip"));
@@ -107,7 +102,7 @@ final class TipMeMySQL implements TipMeDatasource {
         }
         if (conn != null) {
             try {
-                ps = conn.prepareStatement(tip_insert);
+                ps = conn.prepareStatement("INSERT INTO TipMeTips (Tip) VALUES(?)");
                 ps.setString(1, tip);
                 ps.execute();
             }
@@ -146,7 +141,7 @@ final class TipMeMySQL implements TipMeDatasource {
         }
         if (conn != null) {
             try {
-                ps = conn.prepareStatement(tip_delete);
+                ps = conn.prepareStatement("DELETE FROM TipMeTips WHERE Tip = ?");
                 ps.setString(1, tip);
                 ps.execute();
             }

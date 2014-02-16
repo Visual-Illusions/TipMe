@@ -17,9 +17,10 @@
  */
 package net.visualillusionsent.tipme;
 
+import net.visualillusionsent.utils.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class TipMeFlatfile implements TipMeDatasource {
 
     private final TipMe tipme;
     private final TipMeData data;
+    private final File tipsFile = new File("config/TipMe/Tips.txt");
 
     TipMeFlatfile(TipMe tipme, TipMeData data) {
         this.tipme = tipme;
@@ -46,7 +48,7 @@ public class TipMeFlatfile implements TipMeDatasource {
         BufferedReader in = null;
         boolean toRet = true;
         try {
-            in = new BufferedReader(new FileReader(data.tipsFile));
+            in = new BufferedReader(new FileReader(tipsFile));
             String str;
             int num = 0;
             while ((str = in.readLine()) != null) {
@@ -79,8 +81,9 @@ public class TipMeFlatfile implements TipMeDatasource {
         boolean toRet = true;
         PrintWriter out = null;
         try {
-            out = new PrintWriter(new FileWriter(data.tipsFile, true));
+            out = new PrintWriter(new FileWriter(tipsFile, true));
             out.println(tip);
+            out.flush();
         }
         catch (IOException ioex) {
             tipme.getPluginLogger().log(Level.SEVERE, "Unable to save tip to Tips.txt", ioex);
@@ -96,51 +99,12 @@ public class TipMeFlatfile implements TipMeDatasource {
 
     @Override
     public boolean removeTip(String tip) {
-        boolean toRet = true;
-        BufferedReader br = null;
-        PrintWriter pw = null;
-        File tips = new File(data.tipsFile);
-        File tempFile = new File(data.tipsFile + ".tmp");
         try {
-            br = new BufferedReader(new FileReader(tips));
-            pw = new PrintWriter(new FileWriter(tempFile));
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                if (!line.trim().equals(tip)) {
-                    pw.println(line);
-                    pw.flush();
-                }
-            }
+            FileUtils.removeLine(tipsFile, tip);
         }
-        catch (FileNotFoundException fnfex) {
-            tipme.getPluginLogger().log(Level.SEVERE, "Unable to find Tips.txt", fnfex);
-            toRet = false;
+        catch (Exception ex) {
+            return false;
         }
-        catch (IOException ioex) {
-            tipme.getPluginLogger().log(Level.SEVERE, "Unable to save Tips.txt", ioex);
-            toRet = false;
-        }
-        finally {
-            if (pw != null) {
-                pw.close();
-            }
-            try {
-                if (br != null) {
-                    br.close();
-                }
-            }
-            catch (IOException e) {
-                tipme.getPluginLogger().warning("Failed to close Tips.txt");
-            }
-            if (!tips.delete()) {
-                tipme.getPluginLogger().severe("Could not delete old tips file...");
-                toRet = false;
-            }
-            else if (!tempFile.renameTo(tips)) {
-                tipme.getPluginLogger().severe("Could not rename tips tempfile...");
-                toRet = false;
-            }
-        }
-        return toRet;
+        return true;
     }
 }
