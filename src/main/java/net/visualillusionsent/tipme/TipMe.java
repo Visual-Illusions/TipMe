@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public interface TipMe {
 
-    Logger getLog();
+    Logger getPluginLogger();
 
     void broadcastTip(String tip);
 

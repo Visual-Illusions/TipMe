@@ -19,13 +19,12 @@ package net.visualillusionsent.tipme.bukkit;
 
 import net.visualillusionsent.minecraft.plugin.bukkit.VisualIllusionsBukkitPluginInformationCommand;
 import net.visualillusionsent.tipme.TipMeData;
-import net.visualillusionsent.utils.VersionChecker;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -39,6 +38,8 @@ public class TipMeCommandExecutor extends VisualIllusionsBukkitPluginInformation
     TipMeCommandExecutor(BukkitTipMe tipme) {
         super(tipme);
         this.tmd = tipme.tmd;
+        tipme.getCommand("tipme").setExecutor(this);
+        tipme.getCommand("tip").setExecutor(this);
     }
 
     @Override
@@ -93,31 +94,18 @@ public class TipMeCommandExecutor extends VisualIllusionsBukkitPluginInformation
             }
             catch (Exception ex) {
                 sender.sendMessage("\u00A7CAn unhandled exception has occurred in TipMe! Error has been logged!");
-                plugin.getLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
+                plugin.getPluginLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
             }
             return true;
         }
         else if (label.equals("tipme")) {
-            for (String msg : about) {
-                if (msg.equals("$VERSION_CHECK$")) {
-                    VersionChecker vc = plugin.getVersionChecker();
-                    Boolean isLatest = vc.isLatest();
-                    if (isLatest == null) {
-                        sender.sendMessage(center(ChatColor.DARK_GRAY.toString().concat("VersionCheckerError: ").concat(vc.getErrorMessage())));
-                    }
-                    else if (!isLatest) {
-                        sender.sendMessage(center(ChatColor.DARK_GRAY.toString().concat(vc.getUpdateAvailibleMessage())));
-                    }
-                    else {
-                        sender.sendMessage(center(ChatColor.GREEN.toString().concat("Latest Version Installed")));
-                    }
-                }
-                else {
-                    sender.sendMessage(msg);
-                }
-            }
+            this.sendInformation(sender);
         }
         return false;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        return null;
+    }
 }

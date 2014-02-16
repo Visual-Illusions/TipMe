@@ -22,8 +22,6 @@ import net.visualillusionsent.tipme.TipMe;
 import net.visualillusionsent.tipme.TipMeData;
 import org.bukkit.Bukkit;
 
-import java.util.logging.Logger;
-
 /**
  * TipMe main plugin class for Bukkit
  *
@@ -37,9 +35,7 @@ public final class BukkitTipMe extends VisualIllusionsBukkitPlugin implements Ti
         try {
             if (tmd == null) {
                 tmd = new TipMeData(this);
-                TipMeCommandExecutor exe = new TipMeCommandExecutor(this);
-                getCommand("tipme").setExecutor(exe);
-                getCommand("tip").setExecutor(exe);
+                new TipMeCommandExecutor(this);
             }
         }
         catch (Throwable thrown) {
@@ -52,11 +48,6 @@ public final class BukkitTipMe extends VisualIllusionsBukkitPlugin implements Ti
         if (tmd != null) {
             tmd.killTimer();
         }
-    }
-
-    @Override
-    public Logger getLog() {
-        return this.getLogger();
     }
 
     @Override

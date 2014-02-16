@@ -22,7 +22,7 @@ import net.visualillusionsent.minecraft.plugin.canary.VisualIllusionsCanaryPlugi
 import net.visualillusionsent.tipme.TipMe;
 import net.visualillusionsent.tipme.TipMeData;
 
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * TipMe main plugin class for CanaryMod
@@ -41,7 +41,7 @@ public class CanaryTipMe extends VisualIllusionsCanaryPlugin implements TipMe {
             }
         }
         catch (Throwable thrown) {
-            getLogman().severe("TipMe failed to start...");
+            getPluginLogger().log(Level.SEVERE, "TipMe failed to start...", thrown);
             return false;
         }
         return true;
@@ -49,12 +49,9 @@ public class CanaryTipMe extends VisualIllusionsCanaryPlugin implements TipMe {
 
     @Override
     public void disable() {
-        tmd.killTimer();
-    }
-
-    @Override
-    public Logger getLog() {
-        return getLogman();
+        if (tmd != null) {
+            tmd.killTimer();
+        }
     }
 
     @Override

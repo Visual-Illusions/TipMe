@@ -55,10 +55,10 @@ public class TipMeFlatfile implements TipMeDatasource {
                     num++;
                 }
             }
-            tipme.getLog().info(String.format("Loaded %d tips.", num));
+            tipme.getPluginLogger().info(String.format("Loaded %d tips.", num));
         }
         catch (IOException ioex) {
-            tipme.getLog().log(Level.SEVERE, "Unable to load Tips.txt", ioex);
+            tipme.getPluginLogger().log(Level.SEVERE, "Unable to load Tips.txt", ioex);
             toRet = false;
         }
         finally {
@@ -67,7 +67,7 @@ public class TipMeFlatfile implements TipMeDatasource {
                     in.close();
                 }
                 catch (IOException ioex) {
-                    tipme.getLog().warning("Failed to close Tips.txt");
+                    tipme.getPluginLogger().warning("Failed to close Tips.txt");
                 }
             }
         }
@@ -83,7 +83,7 @@ public class TipMeFlatfile implements TipMeDatasource {
             out.println(tip);
         }
         catch (IOException ioex) {
-            tipme.getLog().log(Level.SEVERE, "Unable to save tip to Tips.txt", ioex);
+            tipme.getPluginLogger().log(Level.SEVERE, "Unable to save tip to Tips.txt", ioex);
             toRet = false;
         }
         finally {
@@ -113,11 +113,11 @@ public class TipMeFlatfile implements TipMeDatasource {
             }
         }
         catch (FileNotFoundException fnfex) {
-            tipme.getLog().log(Level.SEVERE, "Unable to find Tips.txt", fnfex);
+            tipme.getPluginLogger().log(Level.SEVERE, "Unable to find Tips.txt", fnfex);
             toRet = false;
         }
         catch (IOException ioex) {
-            tipme.getLog().log(Level.SEVERE, "Unable to save Tips.txt", ioex);
+            tipme.getPluginLogger().log(Level.SEVERE, "Unable to save Tips.txt", ioex);
             toRet = false;
         }
         finally {
@@ -130,14 +130,14 @@ public class TipMeFlatfile implements TipMeDatasource {
                 }
             }
             catch (IOException e) {
-                tipme.getLog().warning("Failed to close Tips.txt");
+                tipme.getPluginLogger().warning("Failed to close Tips.txt");
             }
             if (!tips.delete()) {
-                tipme.getLog().severe("Could not delete old tips file...");
+                tipme.getPluginLogger().severe("Could not delete old tips file...");
                 toRet = false;
             }
             else if (!tempFile.renameTo(tips)) {
-                tipme.getLog().severe("Could not rename tips tempfile...");
+                tipme.getPluginLogger().severe("Could not rename tips tempfile...");
                 toRet = false;
             }
         }

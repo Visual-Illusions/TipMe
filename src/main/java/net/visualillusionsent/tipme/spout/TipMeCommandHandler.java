@@ -19,13 +19,11 @@ package net.visualillusionsent.tipme.spout;
 
 import net.visualillusionsent.minecraft.plugin.spout.VisualIllusionsSpoutPluginInformationCommand;
 import net.visualillusionsent.tipme.TipMeData;
-import net.visualillusionsent.utils.VersionChecker;
 import org.spout.api.command.CommandArguments;
 import org.spout.api.command.CommandSource;
 import org.spout.api.command.annotated.CommandDescription;
 import org.spout.api.command.annotated.Permissible;
 import org.spout.api.exception.CommandException;
-import org.spout.vanilla.ChatStyle;
 
 import java.util.logging.Level;
 
@@ -96,29 +94,12 @@ public class TipMeCommandHandler extends VisualIllusionsSpoutPluginInformationCo
         }
         catch (Exception ex) {
             source.sendMessage("\u00A7CAn unhandled exception has occurred in TipMe! Error has been logged!");
-            plugin.getLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
+            plugin.getPluginLogger().log(Level.SEVERE, "An unhandled exception has occurred in TipMe! Report this to DarkDiplomat on GitHub!", ex);
         }
     }
 
     @CommandDescription(aliases = { "tipme" }, usage = "", desc = "TipMe Information Command")
     public void tipme(CommandSource source, CommandArguments args) throws CommandException {
-        for (String msg : about) {
-            if (msg.equals("$VERSION_CHECK$")) {
-                VersionChecker vc = plugin.getVersionChecker();
-                Boolean isLatest = vc.isLatest();
-                if (isLatest == null) {
-                    source.sendMessage(center(ChatStyle.DARK_GRAY.toString().concat("VersionCheckerError: ").concat(vc.getErrorMessage())));
-                }
-                else if (!isLatest) {
-                    source.sendMessage(center(ChatStyle.DARK_GRAY.toString().concat(vc.getUpdateAvailibleMessage())));
-                }
-                else {
-                    source.sendMessage(center(ChatStyle.GREEN.toString().concat("Latest Version Installed")));
-                }
-            }
-            else {
-                source.sendMessage(msg);
-            }
-        }
+        this.sendInformation(source);
     }
 }

@@ -24,8 +24,6 @@ import org.spout.api.Server;
 import org.spout.api.Spout;
 import org.spout.api.command.annotated.AnnotatedCommandExecutorFactory;
 
-import java.util.logging.Logger;
-
 public final class SpoutTipMe extends VisualIllusionsSpoutPlugin implements TipMe {
 
     TipMeData tmd;
@@ -43,11 +41,9 @@ public final class SpoutTipMe extends VisualIllusionsSpoutPlugin implements TipM
     }
 
     public void onDisable() {
-    }
-
-    @Override
-    public Logger getLog() {
-        return this.getLogger();
+        if (tmd != null) {
+            tmd.killTimer();
+        }
     }
 
     @Override

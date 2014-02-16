@@ -47,10 +47,10 @@ public final class TipMeData {
     private final String prefix;
     private final String tipspropsFile = "config/TipMe/TipMe.cfg";
     private final String sqlDriveURL = "jdbc:mysql://";
+    private final ArrayList<String> tips = new ArrayList<String>();
     private Properties tipsprops;
     private TipMeDatasource tmds;
     private int currenttip;
-    private ArrayList<String> tips = new ArrayList<String>();
     private String sqlUsername, sqlPassword, sqlDatabase;
     private Timer tipTime;
 
@@ -77,7 +77,7 @@ public final class TipMeData {
         }
     }
 
-    private final boolean load() {
+    private boolean load() {
         if (useMySQL) {
             tmds = new TipMeMySQL(tipme, this);
         }
@@ -102,7 +102,6 @@ public final class TipMeData {
         Collections.copy(backup, tips);
         tips.clear();
         if (!tmds.loadTips()) {
-            tips = new ArrayList<String>(backup);
             Collections.copy(tips, backup);
             return false;
         }
@@ -136,7 +135,7 @@ public final class TipMeData {
             synchronized (tips) {
                 int index = 0;
                 for (String tip : tips) {
-                    String[] parse = tip.split(colorPre + "[Zz]");
+                    String[] parse = tip.split(colorPre.concat("[Zz]"));
                     receiver.send("\u00A76#" + index + ":\u00A7r " + parse[0]);
                     for (int lnindex = 1; lnindex < parse.length; lnindex++) {
                         receiver.send("  ".concat(parse[lnindex]));
@@ -161,7 +160,7 @@ public final class TipMeData {
             String tippy = tips.get(currenttip++);
             if (tippy != null) {
                 String[] parse = tippy.split(colorPre.concat("[Zz]"));
-                tipme.broadcastTip(new StringBuilder().append(prefix).append("\u00A7r ").append(parse[0]).toString());
+                tipme.broadcastTip(prefix.concat("\u00A7r ").concat(parse[0]));
                 for (int index = 1; index < parse.length; index++) {
                     tipme.broadcastTip("  ".concat(parse[index]));
                 }
@@ -179,13 +178,13 @@ public final class TipMeData {
         tips.add(parseTip(tip));
     }
 
-    private final boolean makeFiles() {
+    private boolean makeFiles() {
         File checkDir = new File(tipsFile.replace("Tips.txt", ""));
         File checkTipsFile = new File(tipsFile);
         File checkTipsProps = new File(tipspropsFile);
         if (!checkDir.exists()) {
             if (!checkDir.mkdirs()) {
-                tipme.getLog().severe("Unable to create TipMe configuration directory...");
+                tipme.getPluginLogger().severe("Unable to create TipMe configuration directory...");
                 return false;
             }
         }
@@ -194,7 +193,7 @@ public final class TipMeData {
                 checkTipsFile.createNewFile();
             }
             catch (IOException e) {
-                tipme.getLog().severe("Failed to make Tips.txt");
+                tipme.getPluginLogger().severe("Failed to make Tips.txt");
                 return false;
             }
         }
@@ -232,8 +231,10 @@ public final class TipMeData {
             return true;
         }
         catch (FileNotFoundException e) {
+            // IGNORED
         }
         catch (IOException e) {
+            // IGNORED
         }
         return false;
     }
